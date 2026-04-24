@@ -1,0 +1,1 @@
+{"root":["./src/app.tsx","./src/main.tsx","./src/vite-env.d.ts","./src/api/client.ts","./src/api/predictions.ts","./src/components/galaxyviewer3d.tsx","./src/pages/history.tsx","./src/pages/home.tsx","./src/pages/login.tsx","./src/pages/predict.tsx","./src/pages/register.tsx","./src/store/auth.tsx","./tests/login.test.tsx","./tests/setup.ts"],"version":"5.9.3"}

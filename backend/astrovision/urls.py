@@ -1,0 +1,20 @@
+from django.conf import settings
+from django.conf.urls.static import static
+from django.contrib import admin
+from django.http import JsonResponse
+from django.urls import include, path
+
+
+def health(_request):
+    return JsonResponse({"status": "ok", "service": "astrovision-api"})
+
+
+urlpatterns = [
+    path("admin/", admin.site.urls),
+    path("api/health/", health),
+    path("api/auth/", include("apps.accounts.urls")),
+    path("api/predictions/", include("apps.predictions.urls")),
+]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
