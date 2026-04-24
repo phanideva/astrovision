@@ -1,6 +1,6 @@
 import { ChangeEvent, DragEvent, useState } from "react";
 import { predictionsApi, Prediction } from "../api/predictions";
-import GalaxyViewer3D from "../components/GalaxyViewer3D";
+import ResultAnalysis from "../components/ResultAnalysis";
 
 export default function Predict() {
   const [file, setFile] = useState<File | null>(null);
@@ -44,8 +44,11 @@ export default function Predict() {
 
   return (
     <div className="container">
-      <h2>Classify a galaxy image</h2>
+      <h2>Classify a Galaxy Image</h2>
+
+      {/* ── Upload + quick summary ── */}
       <div className="grid">
+        {/* Left: upload */}
         <div className="card">
           <label
             htmlFor="file-input"
@@ -55,18 +58,24 @@ export default function Predict() {
             onDrop={onDrop}
           >
             {preview ? (
-              <img src={preview} alt="preview"
-                style={{ maxWidth: "100%", maxHeight: 280, borderRadius: 8 }} />
+              <img
+                src={preview}
+                alt="preview"
+                style={{ maxWidth: "100%", maxHeight: 280, borderRadius: 8 }}
+              />
             ) : (
               <>
-                <p>Drag & drop a JPEG/PNG, or click to choose</p>
+                <p>Drag &amp; drop a JPEG / PNG, or click to choose</p>
                 <p style={{ fontSize: 12 }}>Max 8 MB</p>
               </>
             )}
           </label>
           <input
-            id="file-input" type="file" accept="image/png,image/jpeg"
-            style={{ display: "none" }} onChange={onChange}
+            id="file-input"
+            type="file"
+            accept="image/png,image/jpeg"
+            style={{ display: "none" }}
+            onChange={onChange}
           />
           <div style={{ marginTop: 12, display: "flex", gap: 8 }}>
             <button className="btn" onClick={submit} disabled={!file || busy}>
@@ -81,37 +90,47 @@ export default function Predict() {
           {err && <div className="error">{err}</div>}
         </div>
 
+        {/* Right: quick result snippet */}
         <div className="card">
-          <h3>Result</h3>
-          {!result && <p style={{ color: "var(--muted)" }}>Awaiting image…</p>}
+          <h3 style={{ marginTop: 0 }}>Quick Result</h3>
+          {!result && (
+            <p style={{ color: "var(--muted)" }}>
+              {busy ? "Running model inference…" : "Awaiting image upload…"}
+            </p>
+          )}
           {result && (
-            <>
-              <p>
-                <strong style={{ fontSize: 22 }}>{result.predicted_class}</strong>
-                <span style={{ color: "var(--muted)", marginLeft: 8 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+              <div>
+                <span style={{ fontSize: 28, fontWeight: 800 }}>{result.predicted_class}</span>
+                <span style={{ color: "var(--muted)", marginLeft: 10, fontSize: 14 }}>
                   {(result.confidence * 100).toFixed(1)}% confidence
                 </span>
-              </p>
-              {Object.entries(result.probabilities).map(([cls, p]) => (
-                <div key={cls} style={{ marginBottom: 8 }}>
-                  <div style={{
-                    display: "flex", justifyContent: "space-between", fontSize: 13,
-                  }}>
-                    <span>{cls}</span>
-                    <span>{(p * 100).toFixed(1)}%</span>
-                  </div>
-                  <div className="bar">
-                    <span style={{ width: `${p * 100}%` }} />
-                  </div>
-                </div>
-              ))}
-              <div style={{ height: 280, marginTop: 16 }}>
-                <GalaxyViewer3D galaxyClass={result.predicted_class} />
               </div>
-            </>
+              {Object.entries(result.probabilities)
+                .sort(([, a], [, b]) => b - a)
+                .map(([cls, p]) => (
+                  <div key={cls}>
+                    <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12 }}>
+                      <span>{cls}</span>
+                      <span>{(p * 100).toFixed(1)}%</span>
+                    </div>
+                    <div className="bar" style={{ height: 5 }}>
+                      <span style={{ width: `${p * 100}%` }} />
+                    </div>
+                  </div>
+                ))}
+              <p style={{ color: "var(--muted)", fontSize: 12, margin: 0 }}>
+                ↓ Full analysis below
+              </p>
+            </div>
           )}
         </div>
       </div>
+
+      {/* ── Deep-dive analysis panel ── */}
+      {result && (
+        <ResultAnalysis result={result} localImageUrl={preview ?? undefined} />
+      )}
     </div>
   );
 }

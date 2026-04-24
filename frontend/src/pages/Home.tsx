@@ -1,9 +1,30 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import GalaxyViewer3D from "../components/GalaxyViewer3D";
 import { useAuth } from "../store/auth";
 
+const CLASSES = ["Spiral", "Elliptical", "Lenticular", "Irregular"] as const;
+const CLASS_COLORS: Record<string, string> = {
+  Spiral:     "#6ab0ff",
+  Elliptical: "#ffdc82",
+  Lenticular: "#d0aaff",
+  Irregular:  "#7de0a0",
+};
+
 export default function Home() {
   const { user, loading } = useAuth();
+  const [activeClass, setActiveClass] = useState<string>("Spiral");
+
+  // Auto-cycle every 6 seconds
+  useEffect(() => {
+    const id = setInterval(() => {
+      setActiveClass((prev) => {
+        const idx = CLASSES.indexOf(prev as typeof CLASSES[number]);
+        return CLASSES[(idx + 1) % CLASSES.length];
+      });
+    }, 6000);
+    return () => clearInterval(id);
+  }, []);
 
   return (
     <>
@@ -35,10 +56,37 @@ export default function Home() {
           </p>
         )}
       </section>
+
       <div className="container">
-        <div className="card" style={{ height: 420 }}>
-          <GalaxyViewer3D galaxyClass="Spiral" />
+        {/* Class selector tabs */}
+        <div style={{ display: "flex", gap: 8, marginBottom: 12, flexWrap: "wrap" }}>
+          {CLASSES.map((cls) => (
+            <button
+              key={cls}
+              onClick={() => setActiveClass(cls)}
+              style={{
+                padding: "6px 18px",
+                borderRadius: 20,
+                border: `1.5px solid ${CLASS_COLORS[cls]}`,
+                background: activeClass === cls ? CLASS_COLORS[cls] + "33" : "transparent",
+                color: CLASS_COLORS[cls],
+                fontWeight: activeClass === cls ? 700 : 400,
+                cursor: "pointer",
+                fontSize: 13,
+                transition: "all 0.2s",
+              }}
+            >
+              {cls}
+            </button>
+          ))}
         </div>
+
+        <div className="card" style={{ height: 460 }}>
+          <GalaxyViewer3D galaxyClass={activeClass} particles={16000} />
+        </div>
+        <p style={{ textAlign: "center", marginTop: 8, fontSize: 12, color: "var(--muted)" }}>
+          Interactive 3D simulation · drag to rotate · scroll to zoom
+        </p>
       </div>
     </>
   );
