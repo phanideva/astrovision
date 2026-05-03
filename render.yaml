@@ -38,13 +38,13 @@ services:
       - key: NASA_API_KEY
         sync: false
       - key: CORS_ALLOWED_ORIGINS
-        value: "https://astrovision-frontend.onrender.com"
+        value: "https://astrovision.onrender.com"
       - key: WEB_CONCURRENCY
         value: "2"
 
   # ── Frontend: Vite + React static site (frontend-only blueprint) ──
   - type: web
-    name: astrovision-frontend
+    name: astrovision
     runtime: static
     branch: main
     autoDeploy: true
