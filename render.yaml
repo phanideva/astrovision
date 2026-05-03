@@ -15,7 +15,7 @@ services:
   - type: web
     name: astrovision-frontend
     runtime: static
-    branch: dev
+    branch: main
     autoDeploy: true
     rootDir: frontend
     buildCommand: "npm ci && npm run build"
