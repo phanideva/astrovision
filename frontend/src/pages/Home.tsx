@@ -39,7 +39,21 @@ export default function Home() {
       </div>
 
       <div className="container">
-        <h2 className="page-title">Learn space science in one place</h2>
+        <section className="learning-section">
+          <div className="learning-head">
+            <h2 className="page-title learning-title">Learn space science in one place</h2>
+            <p className="learning-subtitle">
+              One guided experience for real NASA data, galaxy-type classification,
+              and interactive 3D exploration.
+            </p>
+            <div className="learning-pills">
+              <span>Real Observatory Imagery</span>
+              <span>AI Galaxy Typing</span>
+              <span>Live Space Feeds</span>
+              <span>Interactive 3D</span>
+            </div>
+          </div>
+
         <div className="feature-grid">
           {FEATURE_CARDS.map((c) => (
             <Link key={c.to} to={c.to} className="feature-card">
@@ -49,6 +63,7 @@ export default function Home() {
             </Link>
           ))}
         </div>
+        </section>
       </div>
 
       <div className="container">

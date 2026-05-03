@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { NasaSearchItem, spaceMediaApi } from "../api/spaceMedia";
+import { CuratedItem, spaceMediaApi } from "../api/spaceMedia";
 
 type GalaxyClass = "Spiral" | "Elliptical" | "Lenticular" | "Irregular";
 
@@ -13,52 +13,39 @@ type GalaxyEntry = {
 
 const CLASSES: GalaxyClass[] = ["Spiral", "Elliptical", "Lenticular", "Irregular"];
 
-const CLASS_META: Record<GalaxyClass, { query: string; color: string; description: string }> = {
+const CLASS_META: Record<GalaxyClass, { color: string; description: string; curatedIds: string[] }> = {
   Spiral: {
-    query: "spiral galaxy hubble visible light",
     color: "#6ab0ff",
     description:
       "Spiral galaxies have winding arms around a bright center where gas, dust, and young stars are common.",
+    curatedIds: ["whirlpool", "ngc-1300", "andromeda"],
   },
   Elliptical: {
-    query: "elliptical galaxy hubble",
     color: "#ffdc82",
     description:
       "Elliptical galaxies are smooth and rounded, with older stars and little active star formation.",
+    curatedIds: ["deep-field", "andromeda", "whirlpool"],
   },
   Lenticular: {
-    query: "lenticular galaxy hubble",
     color: "#d0aaff",
     description:
       "Lenticular galaxies are disk-shaped with a central bulge, bridging spiral and elliptical structures.",
+    curatedIds: ["sombrero", "andromeda", "deep-field"],
   },
   Irregular: {
-    query: "irregular galaxy hubble",
     color: "#7de0a0",
     description:
       "Irregular galaxies have no clear shape, often because of gravitational interactions and turbulent star birth.",
+    curatedIds: ["stephans-quintet", "webb-deep-field", "deep-field"],
   },
 };
 
-function extractImage(item: NasaSearchItem): string | null {
-  const preferred = item.links?.find((l) => l.render === "image")?.href;
-  if (preferred) return preferred;
-  const anyImage = item.links?.find((l) => /\.(jpg|jpeg|png)(\?|$)/i.test(l.href))?.href;
-  return anyImage ?? null;
-}
-
-function toEntry(cls: GalaxyClass, item: NasaSearchItem): GalaxyEntry | null {
-  const imageUrl = extractImage(item);
-  if (!imageUrl) return null;
-  const data = item.data?.[0];
-  const nasaId = data?.nasa_id;
+function toEntry(cls: GalaxyClass, item: CuratedItem): GalaxyEntry {
   return {
-    title: data?.title || `${cls} galaxy`,
-    imageUrl,
-    sourceUrl: nasaId
-      ? `https://images.nasa.gov/details/${encodeURIComponent(nasaId)}`
-      : "https://images.nasa.gov/",
-    credit: data?.center ? `NASA / ${data.center}` : "NASA Image and Video Library",
+    title: item.title || `${cls} galaxy`,
+    imageUrl: item.full,
+    sourceUrl: item.source_url,
+    credit: item.credit,
     description: CLASS_META[cls].description,
   };
 }
@@ -70,18 +57,18 @@ export default function GalaxyShowcase() {
 
   useEffect(() => {
     let cancelled = false;
-    Promise.all(
-      CLASSES.map(async (cls) => {
-        const result = await spaceMediaApi.search(CLASS_META[cls].query, 1);
-        const entry = result.collection.items.map((it) => toEntry(cls, it)).find(Boolean) ?? null;
-        return { cls, entry };
-      })
-    )
-      .then((all) => {
+    spaceMediaApi
+      .curated()
+      .then((items) => {
         if (cancelled) return;
         const next: Partial<Record<GalaxyClass, GalaxyEntry>> = {};
-        all.forEach(({ cls, entry }) => {
-          if (entry) next[cls] = entry;
+        CLASSES.forEach((cls) => {
+          const selected = CLASS_META[cls].curatedIds
+            .map((id) => items.find((it) => it.id === id))
+            .find(Boolean);
+          if (selected) {
+            next[cls] = toEntry(cls, selected);
+          }
         });
         setEntries(next);
       })
@@ -131,7 +118,7 @@ export default function GalaxyShowcase() {
 
       <div className="card galaxy-showcase-card">
         {loading && !current && (
-          <p className="galaxy-showcase-meta">Loading real NASA galaxy imagery...</p>
+          <p className="galaxy-showcase-meta">Loading real telescope imagery...</p>
         )}
 
         {!loading && !current && (
