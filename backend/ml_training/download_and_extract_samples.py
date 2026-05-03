@@ -13,6 +13,10 @@ import argparse
 from pathlib import Path
 import sys
 
+# top-level numpy import to satisfy type-checkers / linters that see
+# `np` used in annotations and in helper functions.
+import numpy as np
+
 DEFAULT_URL = "https://astroweaver.utoronto.ca/Galaxy10.h5"
 
 
