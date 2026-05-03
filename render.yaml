@@ -11,6 +11,37 @@
 databases: []
 
 services:
+  # ── Backend: Django + DRF + PyTorch (Docker) ─────────────────────
+  - type: web
+    name: astrovision-backend
+    runtime: docker
+    plan: free
+    region: oregon
+    branch: dev
+    autoDeploy: true
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    healthCheckPath: /api/health/
+    envVars:
+      - key: DJANGO_DEBUG
+        value: "false"
+      - key: DJANGO_SECRET_KEY
+        generateValue: true
+      - key: DJANGO_ALLOWED_HOSTS
+        value: ".onrender.com"
+      - key: DATABASE_URL
+        value: "sqlite:////tmp/db.sqlite3"
+      - key: MEDIA_ROOT
+        value: "/tmp/media"
+      - key: MODEL_DIR
+        value: "/tmp/model_artifacts"
+      - key: NASA_API_KEY
+        sync: false
+      - key: CORS_ALLOWED_ORIGINS
+        value: "https://astrovision-frontend.onrender.com"
+      - key: WEB_CONCURRENCY
+        value: "2"
+
   # ── Frontend: Vite + React static site (frontend-only blueprint) ──
   - type: web
     name: astrovision-frontend
@@ -23,7 +54,7 @@ services:
     pullRequestPreviewsEnabled: true
     envVars:
       - key: VITE_API_BASE_URL
-        value: ""
+        value: "https://astrovision-backend.onrender.com/api"
       - key: VITE_NASA_API_KEY
         sync: false
     routes:
