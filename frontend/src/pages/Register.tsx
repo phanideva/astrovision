@@ -1,4 +1,5 @@
 import { FormEvent, useState, ChangeEvent } from "react";
+import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../store/auth";
 
@@ -9,22 +10,37 @@ export default function Register() {
   const [password, setPassword] = useState("");
   const [err, setErr] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [slow, setSlow] = useState(false);
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setErr(null);
     setBusy(true);
+    setSlow(false);
+    const slowTimer = window.setTimeout(() => setSlow(true), 5000);
     try {
       await register(email, password);
       nav("/predict");
-    } catch (err: any) {
-      setErr(
-        err?.response?.data?.password?.[0] ??
-          err?.response?.data?.email?.[0] ??
-          "Registration failed."
-      );
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        if (error.code === "ECONNABORTED") {
+          setErr("Signup timed out. The server may be waking up. Please try again.");
+        } else if (!error.response) {
+          setErr("Could not reach the server. Check your internet and try again.");
+        } else {
+          setErr(
+            error?.response?.data?.password?.[0] ??
+              error?.response?.data?.email?.[0] ??
+              "Registration failed."
+          );
+        }
+      } else {
+        setErr("Registration failed.");
+      }
     } finally {
+      window.clearTimeout(slowTimer);
       setBusy(false);
+      setSlow(false);
     }
   }
 
@@ -59,7 +75,11 @@ export default function Register() {
             />
           </div>
           <button className="btn" disabled={busy}>
-            {busy ? "Creating…" : "Sign up"}
+            {busy
+              ? slow
+                ? "Waking server up... this can take ~30s"
+                : "Creating..."
+              : "Sign up"}
           </button>
           {err && <div className="error">{err}</div>}
         </form>

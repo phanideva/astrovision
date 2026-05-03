@@ -22,6 +22,7 @@ interface AuthCtx {
 }
 
 const Ctx = createContext<AuthCtx | null>(null);
+const AUTH_REQUEST_TIMEOUT_MS = 60_000;
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
@@ -49,13 +50,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [fetchMe]);
 
   async function login(email: string, password: string) {
-    const r = await api.post("/auth/login/", { email, password });
+    const r = await api.post(
+      "/auth/login/",
+      { email, password },
+      { timeout: AUTH_REQUEST_TIMEOUT_MS }
+    );
     tokens.set(r.data.access, r.data.refresh);
     await fetchMe();
   }
 
   async function register(email: string, password: string) {
-    await api.post("/auth/register/", { email, password });
+    await api.post(
+      "/auth/register/",
+      { email, password },
+      { timeout: AUTH_REQUEST_TIMEOUT_MS }
+    );
     await login(email, password);
   }
 

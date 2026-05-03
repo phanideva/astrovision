@@ -6,24 +6,31 @@ export default function About() {
       <h1 className="page-title">About AstroVision</h1>
 
       <div className="card">
-        <h2 style={{ marginTop: 0 }}>Mission</h2>
+        <h2 style={{ marginTop: 0 }}>What AstroVision is for</h2>
         <p>
-          AstroVision is a deep-learning powered web application that classifies
-          deep-space galaxy images into morphological types — <b>Spiral</b>,{" "}
-          <b>Elliptical</b>, <b>Lenticular</b>, and <b>Irregular</b> — and
-          renders an interactive 3D representation of the prediction. It also
-          surfaces real, recent NASA imagery, the live position of the
-          International Space Station, current solar weather, and a 3D Solar
-          System explorer to make the cosmos feel close.
+          AstroVision is an education-first space app for students, hobbyists,
+          and curious learners. You can upload a galaxy image and the AI will
+          classify it as <b>Spiral</b>, <b>Elliptical</b>, <b>Lenticular</b>, or
+          <b> Irregular</b>. You can also explore real NASA imagery, track the ISS,
+          view live space-weather feeds, and interact with a 3D Solar System.
         </p>
       </div>
 
       <div className="card">
-        <h2 style={{ marginTop: 0 }}>How it works</h2>
+        <h2 style={{ marginTop: 0 }}>Who should use it</h2>
+        <ul>
+          <li>Students learning astronomy, image classification, and AI basics.</li>
+          <li>Space enthusiasts who want one place for NASA-driven visual tools.</li>
+          <li>Developers who want a reference full-stack ML web application.</li>
+        </ul>
+      </div>
+
+      <div className="card">
+        <h2 style={{ marginTop: 0 }}>How the AI works</h2>
         <ul>
           <li>
-            <b>Model</b> — ResNet-18 trained from scratch on the Galaxy10 SDSS
-            dataset (~21k labelled galaxy images), reduced to a 4-class head.
+            <b>Model</b> — ResNet-18 trained on the Galaxy10 SDSS dataset,
+            reduced to a 4-class galaxy-type output.
           </li>
           <li>
             <b>Backend</b> — Django 5 + Django REST Framework + SimpleJWT, with
@@ -38,6 +45,10 @@ export default function About() {
             Hubble public-domain releases, plus a curated bundled set.
           </li>
         </ul>
+        <p style={{ color: "var(--muted)", marginBottom: 0 }}>
+          Note: if demo weights are being used, predictions are for product flow
+          demonstration and may not match scientific-grade accuracy.
+        </p>
       </div>
 
       <div className="card creator-card">

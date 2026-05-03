@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-type KpRow = [string, string, string, string]; // header + rows
+type KpRow = string[];
 
 export default function SpaceWeather() {
   const [kp, setKp] = useState<{ time: string; value: number }[] | null>(null);
@@ -13,13 +13,23 @@ export default function SpaceWeather() {
       .then((r) => r.json() as Promise<KpRow[]>)
       .then((rows) => {
         if (cancelled) return;
-        const data = rows.slice(1).slice(-24).map((r) => ({
-          time: r[0],
-          value: parseFloat(r[1]),
-        }));
+        const data = rows
+          .slice(1)
+          .slice(-24)
+          .map((r) => ({
+            time: r[0],
+            value: parseFloat(r[1]),
+          }))
+          .filter((d) => Number.isFinite(d.value));
+        if (!data.length) {
+          setErr("Space weather data is temporarily unavailable.");
+          setKp([]);
+          return;
+        }
+        setErr(null);
         setKp(data);
       })
-      .catch(() => !cancelled && setErr("NOAA SWPC unreachable"));
+      .catch(() => !cancelled && setErr("NOAA SWPC is unreachable right now."));
     return () => {
       cancelled = true;
     };
@@ -31,6 +41,7 @@ export default function SpaceWeather() {
   }, []);
 
   const latest = kp && kp.length ? kp[kp.length - 1] : null;
+  const latestValue = latest && Number.isFinite(latest.value) ? latest.value : null;
   const stamp = Date.now();
 
   return (
@@ -71,24 +82,29 @@ export default function SpaceWeather() {
       <div className="card" style={{ marginTop: 16 }}>
         <h3 style={{ marginTop: 0 }}>Planetary K-index (last 24 readings)</h3>
         {err && <div className="error">{err}</div>}
-        {!err && !kp && <p style={{ color: "var(--muted)" }}>Loading…</p>}
+        {!err && !kp && <p style={{ color: "var(--muted)" }}>Loading...</p>}
+        {!err && kp?.length === 0 && (
+          <p style={{ color: "var(--muted)" }}>No recent K-index readings available.</p>
+        )}
         {kp && (
           <>
             <div style={{ display: "flex", alignItems: "center", gap: 24, flexWrap: "wrap" }}>
               <div>
                 <div className="stat-label">Latest Kp</div>
-                <div style={{ fontSize: 36, fontWeight: 800, color: kpColor(latest?.value ?? 0) }}>
-                  {latest?.value.toFixed(2)}
+                <div style={{ fontSize: 36, fontWeight: 800, color: kpColor(latestValue ?? 0) }}>
+                  {latestValue !== null ? latestValue.toFixed(2) : "--"}
                 </div>
                 <div style={{ fontSize: 12, color: "var(--muted)" }}>
-                  {kpDescription(latest?.value ?? 0)}
+                  {latestValue !== null
+                    ? kpDescription(latestValue)
+                    : "Space weather summary unavailable."}
                 </div>
               </div>
               <div style={{ flex: 1, display: "flex", alignItems: "flex-end", gap: 2, height: 80 }}>
                 {kp.map((d, i) => (
                   <div
                     key={i}
-                    title={`${d.time} → Kp ${d.value.toFixed(2)}`}
+                    title={`${d.time} -> Kp ${d.value.toFixed(2)}`}
                     style={{
                       flex: 1,
                       height: `${Math.min(100, (d.value / 9) * 100)}%`,
