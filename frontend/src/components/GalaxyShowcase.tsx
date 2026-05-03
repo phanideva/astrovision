@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { CuratedItem, spaceMediaApi } from "../api/spaceMedia";
+import { spaceMediaApi } from "../api/spaceMedia";
 
 type GalaxyClass = "Spiral" | "Elliptical" | "Lenticular" | "Irregular";
 
@@ -13,73 +13,63 @@ type GalaxyEntry = {
 
 const CLASSES: GalaxyClass[] = ["Spiral", "Elliptical", "Lenticular", "Irregular"];
 
-const CLASS_META: Record<GalaxyClass, { color: string; description: string; curatedIds: string[] }> = {
+const CLASS_META: Record<GalaxyClass, { color: string; description: string }> = {
   Spiral: {
     color: "#6ab0ff",
     description:
       "Spiral galaxies have winding arms around a bright center where gas, dust, and young stars are common.",
-    curatedIds: ["whirlpool", "ngc-1300", "andromeda"],
   },
   Elliptical: {
     color: "#ffdc82",
     description:
       "Elliptical galaxies are smooth and rounded, with older stars and little active star formation.",
-    curatedIds: ["deep-field", "andromeda", "whirlpool"],
   },
   Lenticular: {
     color: "#d0aaff",
     description:
       "Lenticular galaxies are disk-shaped with a central bulge, bridging spiral and elliptical structures.",
-    curatedIds: ["sombrero", "andromeda", "deep-field"],
   },
   Irregular: {
     color: "#7de0a0",
     description:
       "Irregular galaxies have no clear shape, often because of gravitational interactions and turbulent star birth.",
-    curatedIds: ["stephans-quintet", "webb-deep-field", "deep-field"],
   },
 };
 
-function toEntry(cls: GalaxyClass, item: CuratedItem): GalaxyEntry {
-  return {
-    title: item.title || `${cls} galaxy`,
-    imageUrl: item.full,
-    sourceUrl: item.source_url,
-    credit: item.credit,
-    description: CLASS_META[cls].description,
-  };
-}
+const REAL_GALAXY_EXAMPLES: Record<GalaxyClass, GalaxyEntry> = {
+  Spiral: {
+    title: "Whirlpool Galaxy (M51)",
+    imageUrl: "https://cdn.esahubble.org/archives/images/large/heic0506a.jpg",
+    sourceUrl: "https://esahubble.org/images/heic0506a/",
+    credit: "NASA, ESA, S. Beckwith (STScI), and the Hubble Heritage Team",
+    description: CLASS_META.Spiral.description,
+  },
+  Elliptical: {
+    title: "M87 – Elliptical Galaxy",
+    imageUrl: "https://cdn.eso.org/images/screen/eso0846a.jpg",
+    sourceUrl: "https://www.eso.org/public/images/eso0846a/",
+    credit: "ESO / NASA / JPL-Caltech",
+    description: CLASS_META.Elliptical.description,
+  },
+  Lenticular: {
+    title: "Sombrero Galaxy (M104)",
+    imageUrl: "https://cdn.esahubble.org/archives/images/large/opo0328a.jpg",
+    sourceUrl: "https://esahubble.org/images/opo0328a/",
+    credit: "NASA / Hubble Heritage Team",
+    description: CLASS_META.Lenticular.description,
+  },
+  Irregular: {
+    title: "Small Magellanic Cloud",
+    imageUrl: "https://cdn.eso.org/images/large/eso9820d.jpg",
+    sourceUrl: "https://www.eso.org/public/images/eso9820d/",
+    credit: "ESO / Digitized Sky Survey 2",
+    description: CLASS_META.Irregular.description,
+  },
+};
 
 export default function GalaxyShowcase() {
   const [activeClass, setActiveClass] = useState<GalaxyClass>("Spiral");
-  const [entries, setEntries] = useState<Partial<Record<GalaxyClass, GalaxyEntry>>>({});
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    let cancelled = false;
-    spaceMediaApi
-      .curated()
-      .then((items) => {
-        if (cancelled) return;
-        const next: Partial<Record<GalaxyClass, GalaxyEntry>> = {};
-        CLASSES.forEach((cls) => {
-          const selected = CLASS_META[cls].curatedIds
-            .map((id) => items.find((it) => it.id === id))
-            .find(Boolean);
-          if (selected) {
-            next[cls] = toEntry(cls, selected);
-          }
-        });
-        setEntries(next);
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false);
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, []);
+  const entries = REAL_GALAXY_EXAMPLES;
 
   useEffect(() => {
     const id = setInterval(() => {
@@ -117,22 +107,21 @@ export default function GalaxyShowcase() {
       </div>
 
       <div className="card galaxy-showcase-card">
-        {loading && !current && (
-          <p className="galaxy-showcase-meta">Loading real telescope imagery...</p>
-        )}
-
-        {!loading && !current && (
-          <p className="galaxy-showcase-meta">
-            Real-image preview is temporarily unavailable. Visit the Samples tab for curated images.
-          </p>
-        )}
-
         {current && (
           <>
+            <div className="galaxy-showcase-cinematic-glow" />
             <img
               className="galaxy-showcase-image"
-              src={spaceMediaApi.proxyUrl(current.imageUrl)}
+              src={current.imageUrl}
               alt={`${activeClass} galaxy example`}
+              crossOrigin="anonymous"
+              onError={(e) => {
+                const img = e.currentTarget;
+                if (!img.dataset.fallback) {
+                  img.dataset.fallback = "1";
+                  img.src = spaceMediaApi.proxyUrl(current.imageUrl);
+                }
+              }}
             />
             <div className="galaxy-showcase-footer">
               <div>

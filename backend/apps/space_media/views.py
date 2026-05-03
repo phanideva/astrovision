@@ -21,6 +21,8 @@ PROXY_ALLOWED_HOSTS = {
     "images-assets.nasa.gov",
     "cdn.esahubble.org",
     "esahubble.org",
+    "cdn.eso.org",
+    "www.eso.org",
     "stsci-opo.org",
     "photojournal.jpl.nasa.gov",
     "epic.gsfc.nasa.gov",
