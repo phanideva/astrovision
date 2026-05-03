@@ -17,7 +17,7 @@ services:
     runtime: docker
     plan: free
     region: oregon
-    branch: dev
+    branch: main
     autoDeploy: true
     dockerfilePath: ./backend/Dockerfile
     dockerContext: ./backend
