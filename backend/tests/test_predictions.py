@@ -41,7 +41,10 @@ def test_create_prediction(auth_client, user):
     assert body["predicted_class"] == "Spiral"
     assert 0.0 <= body["confidence"] <= 1.0
     assert set(body["probabilities"]) == {
-        "Spiral", "Elliptical", "Irregular", "Lenticular",
+        "Spiral",
+        "Elliptical",
+        "Irregular",
+        "Lenticular",
     }
     assert Prediction.objects.filter(user=user).count() == 1
 
@@ -49,8 +52,11 @@ def test_create_prediction(auth_client, user):
 def test_list_only_own(auth_client, user):
     other = User.objects.create_user(email="o@example.com", password="Sup3rStrong!")
     Prediction.objects.create(
-        user=other, image="uploads/x.png", predicted_class="Spiral",
-        confidence=0.5, probabilities={},
+        user=other,
+        image="uploads/x.png",
+        predicted_class="Spiral",
+        confidence=0.5,
+        probabilities={},
     )
     resp = auth_client.get("/api/predictions/")
     assert resp.status_code == 200
@@ -65,7 +71,5 @@ def test_unauth_rejected():
 def test_reject_non_image(auth_client):
     bad = io.BytesIO(b"not an image")
     bad.name = "x.txt"
-    resp = auth_client.post(
-        "/api/predictions/", {"image": bad}, format="multipart"
-    )
+    resp = auth_client.post("/api/predictions/", {"image": bad}, format="multipart")
     assert resp.status_code == 400

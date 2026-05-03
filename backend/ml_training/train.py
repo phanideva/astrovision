@@ -26,12 +26,7 @@ from torchvision import transforms
 # Allow `python ml_training/train.py` from the backend dir
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from apps.ml.model import (  # noqa: E402
-    INPUT_SIZE,
-    NORM_MEAN,
-    NORM_STD,
-    build_model,
-)
+from apps.ml.model import INPUT_SIZE, NORM_MEAN, NORM_STD, build_model  # noqa: E402
 from ml_training.dataset import MACRO_CLASSES, Galaxy10Dataset  # noqa: E402
 
 ARTIFACTS_DIR = Path(__file__).resolve().parent.parent / "model_artifacts"
@@ -125,8 +120,10 @@ def main():
         train_loss = running / len(train_loader.dataset)
         val_acc = evaluate(model, val_loader, device)
         history.append({"epoch": epoch, "train_loss": train_loss, "val_acc": val_acc})
-        print(f"epoch {epoch:02d}  loss={train_loss:.4f}  val_acc={val_acc:.4f}  "
-              f"({time.time() - t0:.1f}s)")
+        print(
+            f"epoch {epoch:02d}  loss={train_loss:.4f}  val_acc={val_acc:.4f}  "
+            f"({time.time() - t0:.1f}s)"
+        )
         if val_acc > best_acc:
             best_acc = val_acc
             epochs_no_improve = 0

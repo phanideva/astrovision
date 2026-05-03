@@ -1,8 +1,8 @@
 """Django settings for AstroVision project."""
 
+import os
 from datetime import timedelta
 from pathlib import Path
-import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -18,7 +18,9 @@ SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "dev-insecure-key-change-me")
 DEBUG = os.environ.get("DJANGO_DEBUG", "True").lower() == "true"
 ALLOWED_HOSTS = [
     h.strip()
-    for h in os.environ.get("DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1,.onrender.com").split(",")
+    for h in os.environ.get(
+        "DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1,.onrender.com"
+    ).split(",")
     if h.strip()
 ]
 
@@ -76,7 +78,9 @@ if _DATABASE_URL:
         import dj_database_url
 
         DATABASES = {
-            "default": dj_database_url.parse(_DATABASE_URL, conn_max_age=600, ssl_require=False)
+            "default": dj_database_url.parse(
+                _DATABASE_URL, conn_max_age=600, ssl_require=False
+            )
         }
     except ImportError:  # pragma: no cover
         # Fallback: assume sqlite path  e.g. sqlite:////app/data/db.sqlite3
@@ -111,7 +115,9 @@ else:
 AUTH_USER_MODEL = "accounts.User"
 
 AUTH_PASSWORD_VALIDATORS = [
-    {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
+    {
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"
+    },
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
     {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
@@ -157,7 +163,9 @@ CORS_ALLOW_CREDENTIALS = True
 
 # ML
 _MODEL_DIR = Path(os.environ.get("MODEL_DIR", BASE_DIR / "model_artifacts"))
-MODEL_WEIGHTS_PATH = Path(os.environ.get("MODEL_WEIGHTS_PATH", _MODEL_DIR / "galaxy_cnn.pt"))
+MODEL_WEIGHTS_PATH = Path(
+    os.environ.get("MODEL_WEIGHTS_PATH", _MODEL_DIR / "galaxy_cnn.pt")
+)
 CLASS_MAP_PATH = Path(os.environ.get("CLASS_MAP_PATH", _MODEL_DIR / "class_map.json"))
 
 # NASA / external imagery
