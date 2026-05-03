@@ -17,6 +17,7 @@ class PredictionSerializer(serializers.ModelSerializer):
             "predicted_class",
             "confidence",
             "probabilities",
+            "is_public",
             "created_at",
         )
         read_only_fields = (
@@ -32,7 +33,34 @@ class PredictionSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Image exceeds 8 MB limit.")
         content_type = getattr(value, "content_type", None)
         if content_type and content_type.lower() not in ALLOWED_CONTENT_TYPES:
-            raise serializers.ValidationError(
-                "Only JPEG or PNG images are accepted."
-            )
+            raise serializers.ValidationError("Only JPEG or PNG images are accepted.")
         return value
+
+
+class PublicPredictionSerializer(serializers.ModelSerializer):
+    """Anonymized public read-only view of a Prediction."""
+
+    image = serializers.ImageField(read_only=True)
+    handle = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Prediction
+        fields = (
+            "id",
+            "image",
+            "predicted_class",
+            "confidence",
+            "probabilities",
+            "created_at",
+            "handle",
+        )
+        read_only_fields = fields
+
+    def get_handle(self, obj):
+        email = getattr(obj.user, "email", "") or ""
+        if "@" not in email:
+            return "anon"
+        local = email.split("@", 1)[0]
+        if len(local) <= 2:
+            return local[0] + "*"
+        return f"{local[0]}{'*' * (len(local) - 2)}{local[-1]}"

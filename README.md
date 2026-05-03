@@ -1,5 +1,9 @@
 # ðŸŒŒ AstroVision
 
+> **Created & maintained by [Phaneendra Sai Sri Devabhakthuni](https://www.linkedin.com/in/phanideva96/)**
+> Full-stack engineer Â· ML practitioner Â· Space enthusiast
+> ðŸ“§ [phanisaisri@gmail.com](mailto:phanisaisri@gmail.com) Â· ðŸ”— [LinkedIn](https://www.linkedin.com/in/phanideva96/)
+
 End-to-end web app that classifies deep-space galaxy images into
 morphological types â€” **Spiral**, **Elliptical**, **Irregular**, **Lenticular** â€”
 using a CNN trained from scratch on the Galaxy10 SDSS dataset, and renders
@@ -124,3 +128,56 @@ Galaxy morphology classification is a well-studied problem (Galaxy Zoo,
 SDSS, dozens of published CNNs). AstroVision is a polished, end-to-end,
 portfolio-grade implementation â€” not a research breakthrough. The aim
 is a complete, reproducible, fully-tested AI web application stack.
+
+---
+
+## ?? Deploy to Render (auto-deploy on push)
+
+This repo ships with a [ender.yaml](./render.yaml) Blueprint that provisions
+**both** services and a 1 GB persistent disk in one click.
+
+### One-time setup
+
+1. Push this repo to GitHub.
+2. In the [Render dashboard](https://dashboard.render.com/), choose
+   **New +  ?  Blueprint** and pick this repo.
+3. Render reads ender.yaml and creates:
+   - `astrovision-backend` — Docker web service (Django + DRF + PyTorch),
+     persistent disk mounted at `/app/data`, SQLite stored on disk so
+     uploads + predictions survive redeploys.
+   - `astrovision-frontend` — Static site (Vite/React build).
+4. When prompted, paste your free **NASA API key** from
+   <https://api.nasa.gov/> into `NASA_API_KEY` (`DEMO_KEY` works but is
+   rate-limited).
+5. The first build runs the ML weights bootstrap (placeholder weights are
+   created if none are committed) and migrations.
+
+### Auto-deploy
+
+Both services have `autoDeploy: true` and watch the `main` branch.
+Every `git push origin main` triggers a fresh build + deploy on Render —
+no extra CI step required.
+
+> Once live, your URLs will be
+> `https://astrovision-backend.onrender.com` and
+> `https://astrovision-frontend.onrender.com`.
+
+---
+
+## ?? Credits & Data Sources
+
+- **Galaxy10 SDSS** dataset — Bovy et al. (training data)
+- **NASA APOD API** — daily astronomy picture
+- **NASA Image & Video Library** (images-api.nasa.gov)
+- **NASA SDO** — Solar Dynamics Observatory imagery
+- **NOAA SWPC** — geomagnetic / Kp-index space-weather feed
+- **wheretheiss.at** — live ISS position telemetry
+- **Stellarium Web** — embedded interactive sky map
+- **NASA / ESA / Hubble / JWST** — public-domain imagery used in the curated gallery
+- **PyTorch · React · three.js · Django · DRF** — open-source foundations
+
+Built with ? by **Phaneendra Sai Sri Devabhakthuni** —
+[LinkedIn](https://www.linkedin.com/in/phanideva96/) ·
+[Email](mailto:phanisaisri@gmail.com)
+
+© 2025 AstroVision. Released under the MIT License.

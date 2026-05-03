@@ -6,7 +6,13 @@ from django.urls import include, path
 
 
 def health(_request):
-    return JsonResponse({"status": "ok", "service": "astrovision-api"})
+    return JsonResponse(
+        {
+            "status": "ok",
+            "service": "astrovision-api",
+            "author": getattr(settings, "AUTHOR", {}),
+        }
+    )
 
 
 urlpatterns = [
@@ -14,6 +20,7 @@ urlpatterns = [
     path("api/health/", health),
     path("api/auth/", include("apps.accounts.urls")),
     path("api/predictions/", include("apps.predictions.urls")),
+    path("api/space-media/", include("apps.space_media.urls")),
 ]
 
 if settings.DEBUG:

@@ -16,6 +16,7 @@ class Prediction(models.Model):
     predicted_class = models.CharField(max_length=64)
     confidence = models.FloatField()
     probabilities = models.JSONField(default=dict)
+    is_public = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

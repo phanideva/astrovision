@@ -6,11 +6,19 @@ import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# ── Project metadata ───────────────────────────────────────────────────────
+AUTHOR = {
+    "name": "Phaneendra Sai Sri Devabhakthuni",
+    "role": "Creator & Owner",
+    "email": "phanisaisri@gmail.com",
+    "linkedin": "https://www.linkedin.com/in/phanideva96/",
+}
+
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "dev-insecure-key-change-me")
 DEBUG = os.environ.get("DJANGO_DEBUG", "True").lower() == "true"
 ALLOWED_HOSTS = [
     h.strip()
-    for h in os.environ.get("DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
+    for h in os.environ.get("DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1,.onrender.com").split(",")
     if h.strip()
 ]
 
@@ -26,11 +34,13 @@ INSTALLED_APPS = [
     "apps.accounts",
     "apps.predictions",
     "apps.ml",
+    "apps.space_media",
 ]
 
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -58,7 +68,28 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "astrovision.wsgi.application"
 
-if os.environ.get("DB_ENGINE", "postgres").lower() == "sqlite":
+# ── Database ──────────────────────────────────────────────────────────────
+# Priority: DATABASE_URL (Render / 12-factor) → DB_ENGINE=sqlite → Postgres env
+_DATABASE_URL = os.environ.get("DATABASE_URL", "").strip()
+if _DATABASE_URL:
+    try:
+        import dj_database_url
+
+        DATABASES = {
+            "default": dj_database_url.parse(_DATABASE_URL, conn_max_age=600, ssl_require=False)
+        }
+    except ImportError:  # pragma: no cover
+        # Fallback: assume sqlite path  e.g. sqlite:////app/data/db.sqlite3
+        if _DATABASE_URL.startswith("sqlite:///"):
+            DATABASES = {
+                "default": {
+                    "ENGINE": "django.db.backends.sqlite3",
+                    "NAME": _DATABASE_URL.replace("sqlite:///", "", 1),
+                }
+            }
+        else:
+            raise
+elif os.environ.get("DB_ENGINE", "postgres").lower() == "sqlite":
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
@@ -80,9 +111,7 @@ else:
 AUTH_USER_MODEL = "accounts.User"
 
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"
-    },
+    {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
     {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
@@ -95,8 +124,9 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 MEDIA_URL = "media/"
-MEDIA_ROOT = BASE_DIR / "media"
+MEDIA_ROOT = Path(os.environ.get("MEDIA_ROOT", BASE_DIR / "media"))
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
@@ -126,13 +156,25 @@ CORS_ALLOWED_ORIGINS = [
 CORS_ALLOW_CREDENTIALS = True
 
 # ML
-MODEL_WEIGHTS_PATH = BASE_DIR / os.environ.get(
-    "MODEL_WEIGHTS_PATH", "model_artifacts/galaxy_cnn.pt"
-)
-CLASS_MAP_PATH = BASE_DIR / os.environ.get(
-    "CLASS_MAP_PATH", "model_artifacts/class_map.json"
-)
+_MODEL_DIR = Path(os.environ.get("MODEL_DIR", BASE_DIR / "model_artifacts"))
+MODEL_WEIGHTS_PATH = Path(os.environ.get("MODEL_WEIGHTS_PATH", _MODEL_DIR / "galaxy_cnn.pt"))
+CLASS_MAP_PATH = Path(os.environ.get("CLASS_MAP_PATH", _MODEL_DIR / "class_map.json"))
+
+# NASA / external imagery
+NASA_API_KEY = os.environ.get("NASA_API_KEY", "DEMO_KEY")
+
+# Behind Render's HTTPS proxy
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+USE_X_FORWARDED_HOST = True
 
 # File upload limits
 DATA_UPLOAD_MAX_MEMORY_SIZE = 10 * 1024 * 1024  # 10 MB
 FILE_UPLOAD_MAX_MEMORY_SIZE = 10 * 1024 * 1024
+
+# Cache (LocMem in dev — sufficient for APOD/search caching on a single dyno)
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        "LOCATION": "astrovision-default",
+    }
+}

@@ -1,8 +1,10 @@
-import { ChangeEvent, DragEvent, useState } from "react";
+import { ChangeEvent, DragEvent, useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import { predictionsApi, Prediction } from "../api/predictions";
 import ResultAnalysis from "../components/ResultAnalysis";
 
 export default function Predict() {
+  const location = useLocation();
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -17,6 +19,16 @@ export default function Predict() {
     if (preview) URL.revokeObjectURL(preview);
     setPreview(f ? URL.createObjectURL(f) : null);
   }
+
+  // Accept file pre-loaded via Samples → "Classify" button
+  useEffect(() => {
+    const state = location.state as { preloadFile?: File } | null;
+    if (state?.preloadFile instanceof File) {
+      pick(state.preloadFile);
+      window.history.replaceState({}, "");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   function onDrop(e: DragEvent<HTMLLabelElement>) {
     e.preventDefault();

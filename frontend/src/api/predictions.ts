@@ -6,6 +6,7 @@ export interface Prediction {
   predicted_class: string;
   confidence: number;
   probabilities: Record<string, number>;
+  is_public?: boolean;
   created_at: string;
 }
 
@@ -28,4 +29,6 @@ export const predictionsApi = {
       .then((r) => r.data);
   },
   remove: (id: number) => api.delete(`/predictions/${id}/`),
+  togglePublic: (id: number) =>
+    api.post<Prediction>(`/predictions/${id}/toggle-public/`).then((r) => r.data),
 };

@@ -10,6 +10,7 @@ exercisable end-to-end. Replace the .pt file by running
 from __future__ import annotations
 
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -19,7 +20,12 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from apps.ml.model import DEFAULT_CLASSES, build_model  # noqa: E402
 
-ARTIFACTS_DIR = Path(__file__).resolve().parent.parent / "model_artifacts"
+ARTIFACTS_DIR = Path(
+    os.environ.get(
+        "MODEL_DIR",
+        str(Path(__file__).resolve().parent.parent / "model_artifacts"),
+    )
+)
 
 
 def main() -> None:

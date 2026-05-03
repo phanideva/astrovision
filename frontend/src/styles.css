@@ -236,3 +236,304 @@ a:hover { text-decoration: underline; }
   .analysis-viewer-col { min-height: 280px; }
   .analysis-confidence { font-size: 32px; }
 }
+
+/* extended styles appended below */
+
+/* ── Light theme overrides ─────────────────────────────────────────── */
+html[data-theme="light"] {
+  color-scheme: light;
+  --bg: #f4f6fb;
+  --bg-2: #ffffff;
+  --fg: #0d1230;
+  --muted: #54608a;
+  --accent: #2961d6;
+  --accent-2: #8a3eff;
+  --danger: #d23055;
+}
+html[data-theme="light"] body {
+  background: radial-gradient(ellipse at top, #dde6f7 0%, var(--bg) 60%);
+}
+html[data-theme="light"] .navbar {
+  background: rgba(255, 255, 255, 0.78);
+  border-bottom: 1px solid #d9def0;
+}
+html[data-theme="light"] .card,
+html[data-theme="light"] .stat-item,
+html[data-theme="light"] .analysis-list li {
+  background: #ffffff;
+  border-color: #d9def0;
+}
+html[data-theme="light"] .input { background: #ffffff; border-color: #d9def0; }
+html[data-theme="light"] .tab-bar { background: #eef1fa; }
+html[data-theme="light"] .starfield-bg { opacity: 0.18; }
+
+/* ── Starfield background ── */
+.starfield-bg {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* ── Layout shell ── */
+.app-main { min-height: calc(100vh - 220px); }
+
+/* ── Theme toggle ── */
+.theme-toggle {
+  margin-left: 14px;
+  background: transparent;
+  color: var(--fg);
+  border: 1px solid #2a3160;
+  border-radius: 999px;
+  width: 32px; height: 32px;
+  font-size: 16px;
+  cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center;
+  transition: background .2s, border-color .2s;
+}
+.theme-toggle:hover { background: rgba(255,255,255,0.08); }
+
+/* ── Page titles ── */
+.page-title {
+  font-size: 28px;
+  margin: 18px 0 12px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+
+/* ── APOD hero ── */
+.apod-hero {
+  position: relative;
+  min-height: 460px;
+  background-size: cover;
+  background-position: center;
+  display: flex; align-items: flex-end;
+  margin-bottom: 16px;
+}
+.apod-hero-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg,
+    rgba(5,6,13,0.05) 0%,
+    rgba(5,6,13,0.55) 60%,
+    rgba(5,6,13,0.92) 100%);
+}
+.apod-hero-inner {
+  position: relative;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 32px 24px 40px;
+  width: 100%;
+}
+.apod-eyebrow {
+  display: inline-block;
+  font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--accent);
+  background: rgba(108, 182, 255, 0.12);
+  border: 1px solid rgba(108, 182, 255, 0.4);
+  padding: 4px 10px; border-radius: 999px;
+  margin-bottom: 12px;
+}
+.apod-title {
+  font-size: 40px; line-height: 1.1; margin: 0 0 12px;
+  background: linear-gradient(90deg, #fff 0%, #c8d6ff 100%);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  text-shadow: 0 2px 18px rgba(0,0,0,0.6);
+  max-width: 800px;
+}
+.apod-explanation {
+  color: #d8def0;
+  font-size: 14px;
+  max-width: 720px;
+  line-height: 1.5;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.7);
+}
+.apod-credit { font-size: 11px; color: #9aa6c8; margin-top: 8px; }
+
+@media (max-width: 700px) {
+  .apod-title { font-size: 28px; }
+  .apod-hero  { min-height: 360px; }
+}
+
+/* ── CTA row + Feature grid ── */
+.cta-row {
+  display: flex; gap: 12px; flex-wrap: wrap; justify-content: center;
+  margin: -12px 0 24px;
+}
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 14px;
+  margin-bottom: 32px;
+}
+.feature-card {
+  display: block;
+  padding: 18px;
+  background: var(--bg-2);
+  border: 1px solid #1f2545;
+  border-radius: 12px;
+  text-decoration: none;
+  color: var(--fg);
+  transition: transform .15s, border-color .15s, box-shadow .15s;
+}
+.feature-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent);
+  box-shadow: 0 8px 28px rgba(108, 182, 255, 0.12);
+  text-decoration: none;
+}
+.feature-icon { font-size: 32px; margin-bottom: 6px; }
+.feature-title { font-weight: 700; margin-bottom: 4px; }
+.feature-desc { font-size: 13px; color: var(--muted); line-height: 1.4; }
+
+/* ── Footer ── */
+.site-footer {
+  margin-top: 60px;
+  padding: 28px 24px;
+  border-top: 1px solid #1f2545;
+  background: rgba(5, 6, 13, 0.7);
+  backdrop-filter: blur(10px);
+}
+html[data-theme="light"] .site-footer {
+  background: rgba(255,255,255,0.78);
+  border-top-color: #d9def0;
+}
+.footer-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 24px;
+  align-items: start;
+}
+.footer-brand .footer-logo {
+  display: block; font-weight: 700; letter-spacing: 1px; margin-bottom: 6px;
+}
+.footer-brand .footer-tag { font-size: 12px; color: var(--muted); }
+.footer-credit { text-align: center; }
+.footer-credit-line { display: flex; flex-direction: column; gap: 2px; align-items: center; }
+.footer-role {
+  font-size: 10px; letter-spacing: 1.6px; text-transform: uppercase;
+  color: var(--accent);
+}
+.footer-name { font-weight: 700; }
+.footer-links { margin-top: 6px; font-size: 13px; }
+.footer-links a { margin: 0 6px; }
+.footer-links .dot { color: var(--muted); }
+.footer-meta {
+  text-align: right;
+  font-size: 12px; color: var(--muted);
+  display: flex; flex-direction: column; gap: 4px; align-items: flex-end;
+}
+.footer-attrib { opacity: 0.8; }
+@media (max-width: 720px) {
+  .footer-inner { grid-template-columns: 1fr; text-align: center; }
+  .footer-meta  { align-items: center; text-align: center; }
+}
+
+/* ── About / creator ── */
+.about-page .creator-card { margin-top: 16px; }
+.creator-grid {
+  display: grid; grid-template-columns: 100px 1fr; gap: 20px; align-items: start;
+}
+.creator-avatar {
+  width: 90px; height: 90px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  color: #04050a; font-weight: 800; font-size: 26px;
+  display: flex; align-items: center; justify-content: center;
+}
+.creator-name { font-size: 22px; font-weight: 700; }
+.creator-role { color: var(--muted); margin-bottom: 8px; }
+.creator-links { display: flex; gap: 16px; flex-wrap: wrap; font-size: 14px; }
+@media (max-width: 600px) {
+  .creator-grid { grid-template-columns: 1fr; justify-items: center; text-align: center; }
+}
+
+/* ── Gallery ── */
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 14px;
+  margin-top: 16px;
+}
+.gallery-card {
+  background: #0b1422;
+  border: 1px solid #1f2545;
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex; flex-direction: column;
+}
+.gallery-card img {
+  width: 100%; aspect-ratio: 4/3; object-fit: cover; display: block;
+  background: #050810;
+}
+.gallery-meta { padding: 10px 12px; display: flex; flex-direction: column; gap: 4px; }
+.gallery-conf { font-size: 12px; color: var(--muted); }
+.gallery-handle { font-size: 11px; color: var(--muted); }
+
+/* ── Solar System layout ── */
+.solar-wrap {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 16px;
+  margin-top: 12px;
+}
+.solar-canvas {
+  height: 600px; background: #02030a;
+  border: 1px solid #1f2545; border-radius: 12px; overflow: hidden;
+}
+.solar-panel {
+  background: var(--bg-2); border: 1px solid #1f2545;
+  border-radius: 12px; padding: 18px;
+  height: 600px; overflow-y: auto;
+}
+.solar-panel h3 { margin: 0 0 8px; }
+.solar-color-dot {
+  display: inline-block; width: 14px; height: 14px; border-radius: 50%;
+  margin-bottom: 12px;
+}
+.solar-controls { margin-top: 18px; }
+.solar-controls input[type=range] { width: 100%; }
+.solar-hint { margin-top: 10px; font-size: 12px; color: var(--muted); }
+@media (max-width: 900px) {
+  .solar-wrap { grid-template-columns: 1fr; }
+  .solar-panel { height: auto; }
+}
+
+/* ── ISS layout ── */
+.iss-wrap {
+  display: grid; grid-template-columns: 1fr 300px; gap: 16px; margin-top: 12px;
+}
+.iss-canvas {
+  height: 540px; background: #02030a;
+  border: 1px solid #1f2545; border-radius: 12px; overflow: hidden;
+}
+.iss-panel {
+  background: var(--bg-2); border: 1px solid #1f2545;
+  border-radius: 12px; padding: 18px;
+}
+@media (max-width: 900px) { .iss-wrap { grid-template-columns: 1fr; } }
+
+/* ── Sky map iframe ── */
+.sky-frame {
+  position: relative; width: 100%; height: 70vh; min-height: 480px;
+  border: 1px solid #1f2545; border-radius: 12px; overflow: hidden;
+  background: #02030a;
+}
+.sky-frame iframe { width: 100%; height: 100%; border: 0; }
+
+/* ── NASA TV layout ── */
+.tv-tabs { display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; }
+.tv-frame {
+  position: relative; padding-top: 56.25%;
+  border-radius: 12px; overflow: hidden; border: 1px solid #1f2545;
+  background: #02030a;
+}
+.tv-frame iframe {
+  position: absolute; inset: 0; width: 100%; height: 100%; border: 0;
+}
+
+/* Allow brand to behave as link */
+.brand { color: var(--fg); text-decoration: none; }
+.brand:hover { text-decoration: none; }

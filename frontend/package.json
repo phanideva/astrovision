@@ -2,6 +2,10 @@
   "name": "astrovision-frontend",
   "private": true,
   "version": "0.1.0",
+  "description": "AstroVision — galaxy classification + immersive space exploration UI (R3F, NASA APIs, ML).",
+  "author": "Phaneendra Sai Sri Devabhakthuni <phanisaisri@gmail.com> (https://www.linkedin.com/in/phanideva96/)",
+  "homepage": "https://www.linkedin.com/in/phanideva96/",
+  "license": "MIT",
   "type": "module",
   "scripts": {
     "dev": "vite",

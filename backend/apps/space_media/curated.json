@@ -1,0 +1,164 @@
+[
+    {
+        "id": "hubble-pillars",
+        "title": "Pillars of Creation (Hubble, 2014)",
+        "category": "nebula",
+        "credit": "NASA, ESA, and the Hubble Heritage Team (STScI/AURA)",
+        "thumb": "https://cdn.esahubble.org/archives/images/screen/heic1501a.jpg",
+        "full": "https://cdn.esahubble.org/archives/images/large/heic1501a.jpg",
+        "source_url": "https://esahubble.org/images/heic1501a/"
+    },
+    {
+        "id": "webb-pillars",
+        "title": "Pillars of Creation (JWST NIRCam)",
+        "category": "nebula",
+        "credit": "NASA, ESA, CSA, STScI",
+        "thumb": "https://stsci-opo.org/STScI-01GFNRPNT4DKKY9745SR2YGFTH.png",
+        "full": "https://stsci-opo.org/STScI-01GFNRPNT4DKKY9745SR2YGFTH.png",
+        "source_url": "https://webbtelescope.org/contents/media/images/2022/052/01GFNN3PWJMY4RQXKZ585BC4QH"
+    },
+    {
+        "id": "andromeda",
+        "title": "Andromeda Galaxy (M31)",
+        "category": "galaxy",
+        "credit": "NASA / JPL-Caltech",
+        "thumb": "https://photojournal.jpl.nasa.gov/jpegMod/PIA04921_modest.jpg",
+        "full": "https://photojournal.jpl.nasa.gov/jpeg/PIA04921.jpg",
+        "source_url": "https://photojournal.jpl.nasa.gov/catalog/PIA04921"
+    },
+    {
+        "id": "whirlpool",
+        "title": "Whirlpool Galaxy (M51)",
+        "category": "galaxy",
+        "credit": "NASA, ESA, S. Beckwith (STScI), and the Hubble Heritage Team",
+        "thumb": "https://cdn.esahubble.org/archives/images/screen/heic0506a.jpg",
+        "full": "https://cdn.esahubble.org/archives/images/large/heic0506a.jpg",
+        "source_url": "https://esahubble.org/images/heic0506a/"
+    },
+    {
+        "id": "sombrero",
+        "title": "Sombrero Galaxy (M104)",
+        "category": "galaxy",
+        "credit": "NASA / Hubble Heritage Team",
+        "thumb": "https://cdn.esahubble.org/archives/images/screen/opo0328a.jpg",
+        "full": "https://cdn.esahubble.org/archives/images/large/opo0328a.jpg",
+        "source_url": "https://esahubble.org/images/opo0328a/"
+    },
+    {
+        "id": "deep-field",
+        "title": "Hubble Ultra-Deep Field",
+        "category": "deep-field",
+        "credit": "NASA, ESA, S. Beckwith (STScI) and the HUDF Team",
+        "thumb": "https://cdn.esahubble.org/archives/images/screen/heic0611b.jpg",
+        "full": "https://cdn.esahubble.org/archives/images/large/heic0611b.jpg",
+        "source_url": "https://esahubble.org/images/heic0611b/"
+    },
+    {
+        "id": "webb-deep-field",
+        "title": "Webb's First Deep Field (SMACS 0723)",
+        "category": "deep-field",
+        "credit": "NASA, ESA, CSA, STScI",
+        "thumb": "https://stsci-opo.org/STScI-01G7DCWB7137MYJ05CSH1Q5Z1Z.png",
+        "full": "https://stsci-opo.org/STScI-01G7DCWB7137MYJ05CSH1Q5Z1Z.png",
+        "source_url": "https://webbtelescope.org/contents/media/images/2022/035/01G7DCWB7137MYJ05CSH1Q5Z1Z"
+    },
+    {
+        "id": "carina",
+        "title": "Cosmic Cliffs in the Carina Nebula (JWST)",
+        "category": "nebula",
+        "credit": "NASA, ESA, CSA, STScI",
+        "thumb": "https://stsci-opo.org/STScI-01G77PKB8NKR7S8Z6HBXMYATGJ.png",
+        "full": "https://stsci-opo.org/STScI-01G77PKB8NKR7S8Z6HBXMYATGJ.png",
+        "source_url": "https://webbtelescope.org/contents/media/images/2022/031/01G77PKB8NKR7S8Z6HBXMYATGJ"
+    },
+    {
+        "id": "horsehead",
+        "title": "Horsehead Nebula (Hubble infrared)",
+        "category": "nebula",
+        "credit": "NASA, ESA, and the Hubble Heritage Team",
+        "thumb": "https://cdn.esahubble.org/archives/images/screen/heic1307a.jpg",
+        "full": "https://cdn.esahubble.org/archives/images/large/heic1307a.jpg",
+        "source_url": "https://esahubble.org/images/heic1307a/"
+    },
+    {
+        "id": "crab",
+        "title": "Crab Nebula (Hubble)",
+        "category": "nebula",
+        "credit": "NASA, ESA, J. Hester and A. Loll (Arizona State University)",
+        "thumb": "https://cdn.esahubble.org/archives/images/screen/heic0515a.jpg",
+        "full": "https://cdn.esahubble.org/archives/images/large/heic0515a.jpg",
+        "source_url": "https://esahubble.org/images/heic0515a/"
+    },
+    {
+        "id": "saturn",
+        "title": "Saturn (Cassini)",
+        "category": "planet",
+        "credit": "NASA / JPL-Caltech / Space Science Institute",
+        "thumb": "https://photojournal.jpl.nasa.gov/jpegMod/PIA17172_modest.jpg",
+        "full": "https://photojournal.jpl.nasa.gov/jpeg/PIA17172.jpg",
+        "source_url": "https://photojournal.jpl.nasa.gov/catalog/PIA17172"
+    },
+    {
+        "id": "jupiter",
+        "title": "Jupiter (Juno PJ43)",
+        "category": "planet",
+        "credit": "NASA / JPL-Caltech / SwRI / MSSS",
+        "thumb": "https://photojournal.jpl.nasa.gov/jpegMod/PIA25015_modest.jpg",
+        "full": "https://photojournal.jpl.nasa.gov/jpeg/PIA25015.jpg",
+        "source_url": "https://photojournal.jpl.nasa.gov/catalog/PIA25015"
+    },
+    {
+        "id": "earth-bluemarble",
+        "title": "Blue Marble — Earth from DSCOVR",
+        "category": "earth",
+        "credit": "NASA EPIC Team",
+        "thumb": "https://epic.gsfc.nasa.gov/archive/natural/2024/01/01/jpg/epic_1b_20240101001751.jpg",
+        "full": "https://epic.gsfc.nasa.gov/archive/natural/2024/01/01/png/epic_1b_20240101001751.png",
+        "source_url": "https://epic.gsfc.nasa.gov/"
+    },
+    {
+        "id": "tarantula",
+        "title": "Tarantula Nebula (JWST NIRCam)",
+        "category": "nebula",
+        "credit": "NASA, ESA, CSA, STScI",
+        "thumb": "https://stsci-opo.org/STScI-01GA76HYAA0ZTET1VG31QFRGKD.png",
+        "full": "https://stsci-opo.org/STScI-01GA76HYAA0ZTET1VG31QFRGKD.png",
+        "source_url": "https://webbtelescope.org/contents/media/images/2022/041/01GA76HYAA0ZTET1VG31QFRGKD"
+    },
+    {
+        "id": "ngc-1300",
+        "title": "Barred Spiral NGC 1300 (Hubble)",
+        "category": "galaxy",
+        "credit": "NASA, ESA, and the Hubble Heritage Team",
+        "thumb": "https://cdn.esahubble.org/archives/images/screen/heic0501a.jpg",
+        "full": "https://cdn.esahubble.org/archives/images/large/heic0501a.jpg",
+        "source_url": "https://esahubble.org/images/heic0501a/"
+    },
+    {
+        "id": "stephans-quintet",
+        "title": "Stephan's Quintet (JWST)",
+        "category": "galaxy",
+        "credit": "NASA, ESA, CSA, STScI",
+        "thumb": "https://stsci-opo.org/STScI-01G7JJADTH90FR98AKKJFKSS0B.png",
+        "full": "https://stsci-opo.org/STScI-01G7JJADTH90FR98AKKJFKSS0B.png",
+        "source_url": "https://webbtelescope.org/contents/media/images/2022/034/01G7JJADTH90FR98AKKJFKSS0B"
+    },
+    {
+        "id": "ring-nebula",
+        "title": "Ring Nebula (JWST MIRI)",
+        "category": "nebula",
+        "credit": "NASA, ESA, CSA, STScI",
+        "thumb": "https://stsci-opo.org/STScI-01H82YR7E11GHQT3PJB8YGFRDE.png",
+        "full": "https://stsci-opo.org/STScI-01H82YR7E11GHQT3PJB8YGFRDE.png",
+        "source_url": "https://webbtelescope.org/contents/media/images/2023/126/01H82YR7E11GHQT3PJB8YGFRDE"
+    },
+    {
+        "id": "mars-curiosity",
+        "title": "Martian landscape (Curiosity)",
+        "category": "planet",
+        "credit": "NASA / JPL-Caltech / MSSS",
+        "thumb": "https://photojournal.jpl.nasa.gov/jpegMod/PIA22325_modest.jpg",
+        "full": "https://photojournal.jpl.nasa.gov/jpeg/PIA22325.jpg",
+        "source_url": "https://photojournal.jpl.nasa.gov/catalog/PIA22325"
+    }
+]

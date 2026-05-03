@@ -35,6 +35,11 @@ export default function History() {
     if (expandedId === id) setExpandedId(null);
   }
 
+  async function toggleShare(id: number) {
+    const updated = await predictionsApi.togglePublic(id);
+    setItems((xs) => xs.map((x) => (x.id === id ? { ...x, is_public: updated.is_public } : x)));
+  }
+
   if (loading) return <div className="container">Loading…</div>;
   if (err)     return <div className="container error">{err}</div>;
 
@@ -77,6 +82,14 @@ export default function History() {
               <span style={{ color: "var(--muted)", fontSize: 20, marginRight: 8, userSelect: "none" }}>
                 {isOpen ? "▲" : "▼"}
               </span>
+              <button
+                className="btn secondary"
+                style={{ flexShrink: 0, padding: "6px 12px", fontSize: 12 }}
+                title={p.is_public ? "Hide from public gallery" : "Share to public gallery"}
+                onClick={(e) => { e.stopPropagation(); toggleShare(p.id); }}
+              >
+                {p.is_public ? "🌐 Public" : "🔒 Private"}
+              </button>
               <button
                 className="btn danger"
                 style={{ flexShrink: 0 }}

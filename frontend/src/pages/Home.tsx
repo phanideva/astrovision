@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import GalaxyViewer3D from "../components/GalaxyViewer3D";
+import ApodHero from "../components/ApodHero";
 import { useAuth } from "../store/auth";
 
 const CLASSES = ["Spiral", "Elliptical", "Lenticular", "Irregular"] as const;
@@ -10,6 +11,17 @@ const CLASS_COLORS: Record<string, string> = {
   Lenticular: "#d0aaff",
   Irregular:  "#7de0a0",
 };
+
+const FEATURE_CARDS: { to: string; icon: string; title: string; desc: string }[] = [
+  { to: "/predict",       icon: "🔭", title: "Classify a Galaxy",  desc: "Upload an image and let our ResNet-18 model identify its morphology in real time." },
+  { to: "/solar-system",  icon: "🪐", title: "3D Solar System",    desc: "Walk through the planets in interactive 3D with realistic orbits and textures." },
+  { to: "/iss-live",      icon: "🛰️", title: "ISS Live Tracker",   desc: "Watch the International Space Station orbit Earth in real time on a 3D globe." },
+  { to: "/nasa-tv",       icon: "📺", title: "NASA Live TV",       desc: "Stream NASA's live broadcasts and the ISS HD Earth-viewing experiment." },
+  { to: "/sky-map",       icon: "✨", title: "Sky Map",             desc: "See the constellations currently overhead from your location." },
+  { to: "/space-weather", icon: "☀️", title: "Space Weather",      desc: "Live solar imagery from NASA SDO and the latest geomagnetic Kp-index." },
+  { to: "/gallery",       icon: "🌠", title: "Public Gallery",     desc: "Explore recent classifications from the AstroVision community." },
+  { to: "/samples",       icon: "🖼️", title: "Image Library",      desc: "Browse curated Hubble & JWST imagery and search NASA's archive." },
+];
 
 export default function Home() {
   const { user, loading } = useAuth();
@@ -28,37 +40,40 @@ export default function Home() {
 
   return (
     <>
-      <section className="hero">
-        <h1>Classify Galaxies. Visualize the Cosmos.</h1>
-        <p>
-          AstroVision is a deep-learning powered web app that classifies
-          deep-space galaxy images into morphological types — Spiral,
-          Elliptical, Irregular, and Lenticular — and renders an
-          interactive 3D representation of the prediction.
-        </p>
-        {!loading && (
-          <p style={{ marginTop: 16 }}>
-            {user ? (
+      <ApodHero />
+
+      <div className="container">
+        <div className="cta-row">
+          {!loading &&
+            (user ? (
               <>
-                <Link to="/predict" className="btn" style={{ marginRight: 12 }}>
-                  Classify a Galaxy
-                </Link>
+                <Link to="/predict" className="btn">Classify a Galaxy</Link>
                 <Link to="/samples" className="btn secondary">Browse Samples</Link>
               </>
             ) : (
               <>
-                <Link to="/register" className="btn" style={{ marginRight: 12 }}>
-                  Get started
-                </Link>
+                <Link to="/register" className="btn">Get started</Link>
                 <Link to="/login" className="btn secondary">Log in</Link>
               </>
-            )}
-          </p>
-        )}
-      </section>
+            ))}
+        </div>
+      </div>
 
       <div className="container">
-        {/* Class selector tabs */}
+        <h2 className="page-title">Explore the cosmos</h2>
+        <div className="feature-grid">
+          {FEATURE_CARDS.map((c) => (
+            <Link key={c.to} to={c.to} className="feature-card">
+              <div className="feature-icon">{c.icon}</div>
+              <div className="feature-title">{c.title}</div>
+              <div className="feature-desc">{c.desc}</div>
+            </Link>
+          ))}
+        </div>
+      </div>
+
+      <div className="container">
+        <h2 className="page-title">Live galaxy preview</h2>
         <div style={{ display: "flex", gap: 8, marginBottom: 12, flexWrap: "wrap" }}>
           {CLASSES.map((cls) => (
             <button
