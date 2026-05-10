@@ -11,7 +11,17 @@ from django.http import HttpResponse, JsonResponse
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 
-from .services import NasaError, fetch_apod, search_media
+from .services import (
+    NasaError,
+    fetch_apod,
+    fetch_eonet,
+    fetch_epic,
+    fetch_exoplanets,
+    fetch_mars_rover,
+    fetch_neo_feed,
+    fetch_next_launch,
+    search_media,
+)
 
 CURATED_FILE = Path(__file__).resolve().parent / "curated.json"
 
@@ -27,8 +37,13 @@ PROXY_ALLOWED_HOSTS = {
     "photojournal.jpl.nasa.gov",
     "epic.gsfc.nasa.gov",
     "mars.nasa.gov",
+    "mars.jpl.nasa.gov",
     "sdo.gsfc.nasa.gov",
     "services.swpc.noaa.gov",
+    "api.nasa.gov",
+    "eonet.gsfc.nasa.gov",
+    "ll.thespacedevs.com",
+    "exoplanetarchive.ipac.caltech.edu",
 }
 
 PROXY_MAX_BYTES = 12 * 1024 * 1024  # 12 MB hard cap
@@ -100,3 +115,83 @@ def proxy_view(request):
     resp["Cache-Control"] = "public, max-age=86400"
     resp["X-Content-Type-Options"] = "nosniff"
     return resp
+
+
+# ── New v2 endpoints ──────────────────────────────────────────────────
+
+
+@api_view(["GET"])
+@permission_classes([AllowAny])
+def mars_rover_view(request):
+    rover = request.GET.get("rover", "curiosity")
+    sol = request.GET.get("sol")
+    earth_date = request.GET.get("earth_date")
+    camera = request.GET.get("camera")
+    try:
+        page = max(1, int(request.GET.get("page", "1")))
+    except ValueError:
+        page = 1
+    try:
+        return JsonResponse(fetch_mars_rover(rover, sol, earth_date, camera, page))
+    except NasaError as exc:
+        return JsonResponse({"error": str(exc)}, status=502)
+
+
+@api_view(["GET"])
+@permission_classes([AllowAny])
+def epic_view(request):
+    date = request.GET.get("date") or None
+    try:
+        return JsonResponse({"items": fetch_epic(date)})
+    except NasaError as exc:
+        return JsonResponse({"error": str(exc)}, status=502)
+
+
+@api_view(["GET"])
+@permission_classes([AllowAny])
+def neo_feed_view(request):
+    start = request.GET.get("start")
+    end = request.GET.get("end")
+    try:
+        return JsonResponse(fetch_neo_feed(start, end))
+    except NasaError as exc:
+        return JsonResponse({"error": str(exc)}, status=502)
+
+
+@api_view(["GET"])
+@permission_classes([AllowAny])
+def eonet_view(request):
+    try:
+        limit = max(1, min(int(request.GET.get("limit", "20")), 100))
+    except ValueError:
+        limit = 20
+    try:
+        return JsonResponse(fetch_eonet(limit))
+    except NasaError as exc:
+        return JsonResponse({"error": str(exc)}, status=502)
+
+
+@api_view(["GET"])
+@permission_classes([AllowAny])
+def launch_next_view(request):
+    try:
+        limit = max(1, min(int(request.GET.get("limit", "5")), 20))
+    except ValueError:
+        limit = 5
+    try:
+        return JsonResponse(fetch_next_launch(limit))
+    except NasaError as exc:
+        return JsonResponse({"error": str(exc)}, status=502)
+
+
+@api_view(["GET"])
+@permission_classes([AllowAny])
+def exoplanets_view(request):
+    try:
+        limit = max(1, min(int(request.GET.get("limit", "200")), 1000))
+    except ValueError:
+        limit = 200
+    try:
+        return JsonResponse({"items": fetch_exoplanets(limit)})
+    except NasaError as exc:
+        return JsonResponse({"error": str(exc)}, status=502)

@@ -35,9 +35,13 @@ class PredictionViewSet(
         prediction.predicted_class = result["class"]
         prediction.confidence = result["confidence"]
         prediction.probabilities = result["probabilities"]
-        prediction.save(
-            update_fields=["predicted_class", "confidence", "probabilities"]
-        )
+        prediction.save(update_fields=["predicted_class", "confidence", "probabilities"])
+        try:
+            from apps.gamification.services import record_event
+
+            record_event(self.request.user, "predict")
+        except Exception:  # pragma: no cover - never fail prediction on gamification
+            pass
         serializer.instance = prediction
 
     @action(detail=True, methods=["post"], url_path="toggle-public")
@@ -65,9 +69,7 @@ def public_gallery(request):
     total = qs.count()
     start = (page - 1) * page_size
     items = qs[start : start + page_size]
-    serializer = PublicPredictionSerializer(
-        items, many=True, context={"request": request}
-    )
+    serializer = PublicPredictionSerializer(items, many=True, context={"request": request})
     return Response(
         {
             "count": total,
@@ -99,8 +101,7 @@ def leaderboard(_request):
         {
             "since": since.isoformat(),
             "results": [
-                {"handle": _anonymize(r["user__email"]), "total": r["total"]}
-                for r in rows
+                {"handle": _anonymize(r["user__email"]), "total": r["total"]} for r in rows
             ],
         }
     )

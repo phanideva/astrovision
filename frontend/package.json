@@ -15,21 +15,31 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@fontsource/orbitron": "^5.0.20",
+    "@fontsource/space-grotesk": "^5.0.20",
     "@react-three/drei": "^9.109.2",
     "@react-three/fiber": "^8.16.8",
+    "@react-three/postprocessing": "^2.16.2",
+    "@tabler/icons-react": "^3.10.0",
     "axios": "^1.7.2",
+    "framer-motion": "^11.3.8",
+    "html2canvas": "^1.4.1",
+    "jspdf": "^2.5.1",
+    "postprocessing": "^6.35.5",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.24.1",
-    "three": "^0.166.1"
+    "recharts": "^2.12.7",
+    "three": "^0.169.0"
   },
   "devDependencies": {
+    "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.4.6",
     "@testing-library/react": "^16.0.0",
     "@testing-library/user-event": "^14.5.2",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
-    "@types/three": "^0.166.0",
+    "@types/three": "^0.169.0",
     "@vitejs/plugin-react": "^4.3.1",
     "jsdom": "^24.1.0",
     "msw": "^2.3.1",
