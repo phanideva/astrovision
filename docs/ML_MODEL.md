@@ -66,6 +66,12 @@ returns:
   "probabilities": { "Spiral": 0.91, ... } }
 ```
 
+Prediction writes also feed the user experience layer:
+
+- prediction rows are persisted in `predictions_prediction`
+- `record_event(user, "predict")` updates gamification counters
+- portal mission progress and notifications can be updated as side-effects
+
 ## Reported metrics
 
 Run training and `metrics.json` will be regenerated. With the default
@@ -84,3 +90,15 @@ your own once you've trained.
 `scripts/make_demo_weights.py` writes a randomly-initialized state
 dict so the API works end-to-end on a fresh checkout. Predictions are
 not meaningful until you train.
+
+## Local run notes
+
+If you use Windows desktop launchers:
+
+- start script launches backend + frontend and opens localhost
+- stop script terminates services by freeing ports `8000` and `3000`
+
+Scripts:
+
+- `scripts/launch_astrovision_localhost.ps1`
+- `scripts/stop_astrovision_localhost.ps1`
