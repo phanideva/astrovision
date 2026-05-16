@@ -1,6 +1,6 @@
 import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { OrbitControls, Stars } from "@react-three/drei";
+import { OrbitControls, Stars, useTexture } from "@react-three/drei";
 import * as THREE from "three";
 
 type ISSPos = { latitude: number; longitude: number; altitude: number; velocity: number; timestamp: number };
@@ -8,6 +8,8 @@ type ISSPos = { latitude: number; longitude: number; altitude: number; velocity:
 const EARTH_R = 2;
 const ISS_ALT_FACTOR = 1.05; // visual offset above surface
 const TRAIL_MAX = 200;
+const EARTH_TEX = "https://threejs.org/examples/textures/planets/earth_atmos_2048.jpg";
+const WORLD_MAP_TEX = "https://upload.wikimedia.org/wikipedia/commons/8/80/World_map_-_low_resolution.svg";
 
 function latLonToVec3(lat: number, lon: number, r: number) {
   const phi = (90 - lat) * (Math.PI / 180);
@@ -20,6 +22,7 @@ function latLonToVec3(lat: number, lon: number, r: number) {
 }
 
 function Earth() {
+  const earthMap = useTexture(EARTH_TEX);
   const ref = useRef<THREE.Mesh>(null!);
   useFrame((_, dt) => {
     if (ref.current) ref.current.rotation.y += dt * 0.02;
@@ -27,7 +30,7 @@ function Earth() {
   return (
     <mesh ref={ref}>
       <sphereGeometry args={[EARTH_R, 64, 64]} />
-      <meshStandardMaterial color="#1a4a8a" emissive="#0a1a3a" emissiveIntensity={0.2} roughness={0.9} />
+      <meshStandardMaterial map={earthMap} color="#ffffff" emissive="#0a1a3a" emissiveIntensity={0.18} roughness={0.92} />
       <mesh>
         <sphereGeometry args={[EARTH_R * 1.02, 32, 32]} />
         <meshBasicMaterial color="#88aaff" transparent opacity={0.08} />
@@ -65,9 +68,16 @@ function Trail({ points }: { points: THREE.Vector3[] }) {
   );
 }
 
+function toMapPoint(lat: number, lon: number): { x: number; y: number } {
+  const x = ((lon + 180) / 360) * 100;
+  const y = ((90 - lat) / 180) * 100;
+  return { x, y };
+}
+
 export default function ISSLive() {
   const [pos, setPos] = useState<ISSPos | null>(null);
   const [trail, setTrail] = useState<THREE.Vector3[]>([]);
+  const [groundTrack, setGroundTrack] = useState<{ lat: number; lon: number }[]>([]);
   const [err, setErr] = useState<string | null>(null);
 
   useEffect(() => {
@@ -85,6 +95,10 @@ export default function ISSLive() {
           const next = [...prev, v];
           return next.length > TRAIL_MAX ? next.slice(next.length - TRAIL_MAX) : next;
         });
+        setGroundTrack((prev) => {
+          const next = [...prev, { lat: d.latitude, lon: d.longitude }];
+          return next.length > TRAIL_MAX ? next.slice(next.length - TRAIL_MAX) : next;
+        });
       } catch (e) {
         if (!cancelled) setErr("Could not reach the ISS tracking API.");
       }
@@ -97,6 +111,10 @@ export default function ISSLive() {
     };
   }, []);
 
+  const markerPoint = pos ? toMapPoint(pos.latitude, pos.longitude) : null;
+  const trailPoints = groundTrack.map((p) => toMapPoint(p.lat, p.lon));
+  const trailPath = trailPoints.map((p, i) => `${i === 0 ? "M" : "L"} ${p.x} ${p.y}`).join(" ");
+
   return (
     <div className="container">
       <h1 className="page-title">🛰️ ISS Live Tracker</h1>
@@ -105,13 +123,44 @@ export default function ISSLive() {
         from <a href="https://wheretheiss.at" target="_blank" rel="noreferrer noopener">wheretheiss.at</a>.
       </p>
 
+      <div className="iss-video card">
+        <h3 style={{ marginTop: 0 }}>Live NASA stream</h3>
+        <div className="tv-frame">
+          <iframe
+            src="https://www.youtube-nocookie.com/embed/21X5lGlDOfg"
+            title="NASA Live Stream"
+            loading="lazy"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerPolicy="strict-origin-when-cross-origin"
+            allowFullScreen
+          />
+        </div>
+      </div>
+
+      <div className="iss-map card">
+        <h3 style={{ marginTop: 0 }}>ISS ground track map</h3>
+        <div className="iss-map-board">
+          <img src={WORLD_MAP_TEX} alt="World map for ISS ground track" />
+          <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="iss-map-overlay">
+            {trailPath && <path d={trailPath} fill="none" stroke="#ff6f88" strokeWidth="0.35" opacity="0.85" />}
+          </svg>
+          {markerPoint && (
+            <div
+              className="iss-map-marker"
+              style={{ left: `${markerPoint.x}%`, top: `${markerPoint.y}%` }}
+              title="Current ISS location"
+            />
+          )}
+        </div>
+      </div>
+
       <div className="iss-wrap">
         <div className="iss-canvas">
           <Canvas camera={{ position: [0, 0, 6], fov: 50 }}>
             <Suspense fallback={null}>
-              <ambientLight intensity={0.4} />
+              <ambientLight intensity={0.28} />
               <directionalLight position={[5, 3, 5]} intensity={1.2} />
-              <Stars radius={50} depth={20} count={2500} factor={3} fade />
+              <Stars radius={60} depth={24} count={3200} factor={3.1} fade />
               <Earth />
               <ISSMarker pos={pos} />
               <Trail points={trail} />

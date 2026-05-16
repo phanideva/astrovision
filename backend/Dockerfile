@@ -7,14 +7,14 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 WORKDIR /app
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-        build-essential libpq-dev curl \
+    build-essential libpq-dev curl \
     && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt .
 RUN pip install --upgrade pip && pip install -r requirements.txt
 
 COPY . .
-
+RUN chmod +x ./entrypoint.sh
 RUN useradd -m -u 1000 astro && chown -R astro:astro /app
 USER astro
 

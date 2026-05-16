@@ -36,7 +36,9 @@ export default function ApodHero() {
       <div className="apod-hero-overlay" />
       <div className="apod-hero-inner">
         <span className="apod-eyebrow">NASA · Astronomy Picture of the Day</span>
-        <h1 className="apod-title">{apod?.title ?? "Classify Galaxies. Visualize the Cosmos."}</h1>
+        <h1 className="apod-title">
+          {apod?.title ?? "Explore Space. Understand Galaxy Types with AI."}
+        </h1>
         {apod ? (
           <p className="apod-explanation">
             {apod.explanation.length > 320
@@ -45,8 +47,8 @@ export default function ApodHero() {
           </p>
         ) : (
           <p className="apod-explanation">
-            AstroVision is a deep-learning powered web app that classifies
-            deep-space galaxies and renders the universe in real-time 3D.
+            AstroVision helps students, hobbyists, and curious learners explore real
+            NASA data and classify galaxy images with an easy-to-use AI workflow.
           </p>
         )}
         {apod?.copyright && (

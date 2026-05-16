@@ -1,8 +1,8 @@
 """Django settings for AstroVision project."""
 
+import os
 from datetime import timedelta
 from pathlib import Path
-import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -35,6 +35,8 @@ INSTALLED_APPS = [
     "apps.predictions",
     "apps.ml",
     "apps.space_media",
+    "apps.gamification",
+    "apps.portal",
 ]
 
 MIDDLEWARE = [

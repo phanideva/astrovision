@@ -36,6 +36,12 @@ class PredictionViewSet(
         prediction.confidence = result["confidence"]
         prediction.probabilities = result["probabilities"]
         prediction.save(update_fields=["predicted_class", "confidence", "probabilities"])
+        try:
+            from apps.gamification.services import record_event
+
+            record_event(self.request.user, "predict")
+        except Exception:  # pragma: no cover - never fail prediction on gamification
+            pass
         serializer.instance = prediction
 
     @action(detail=True, methods=["post"], url_path="toggle-public")

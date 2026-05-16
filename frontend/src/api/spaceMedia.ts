@@ -55,6 +55,18 @@ export const spaceMediaApi = {
     `${(api.defaults.baseURL || "").replace(/\/$/, "")}/space-media/proxy/?url=${encodeURIComponent(
       url
     )}`,
+  marsRover: async (params: { rover?: string; sol?: string; earth_date?: string; camera?: string; page?: number }) =>
+    (await api.get<{ photos: any[] }>("/space-media/mars-rover/", { params })).data,
+  epic: async (date?: string) =>
+    (await api.get<{ items: any[] }>("/space-media/epic/", { params: { date } })).data,
+  neoFeed: async (start?: string, end?: string) =>
+    (await api.get<any>("/space-media/neo-feed/", { params: { start, end } })).data,
+  eonet: async (limit = 20) =>
+    (await api.get<any>("/space-media/eonet/", { params: { limit } })).data,
+  launchNext: async (limit = 5) =>
+    (await api.get<any>("/space-media/launch-next/", { params: { limit } })).data,
+  exoplanets: async (limit = 200) =>
+    (await api.get<{ items: any[] }>("/space-media/exoplanets/", { params: { limit } })).data,
 };
 
 export type PublicPrediction = {

@@ -11,7 +11,10 @@ from __future__ import annotations
 
 import argparse
 from pathlib import Path
-import sys
+
+# top-level numpy import to satisfy type-checkers / linters that see
+# `np` used in annotations and in helper functions.
+import numpy as np
 
 DEFAULT_URL = "https://astroweaver.utoronto.ca/Galaxy10.h5"
 
@@ -66,14 +69,15 @@ def extract_images(h5_path: Path, out_dir: Path, count: int) -> None:
 
 
 def _render_spiral(
-    arr: "np.ndarray",
-    X: "np.ndarray",
-    Y: "np.ndarray",
-    col1: "np.ndarray",
-    col2: "np.ndarray",
-    rng: "np.random.Generator",
+    arr: np.ndarray,
+    X: np.ndarray,
+    Y: np.ndarray,
+    col1: np.ndarray,
+    col2: np.ndarray,
+    rng: np.random.Generator,
 ) -> None:
     import math
+
     import numpy as np
 
     n_arms = int(rng.choice([2, 2, 2, 3, 4]))
@@ -94,7 +98,9 @@ def _render_spiral(
 
     # Central bar
     if has_bar:
-        bar = np.exp(-np.abs(Yi) / 0.022) * np.where(np.abs(X) < bar_len, 1.0, 0.0) * 1.4
+        bar = (
+            np.exp(-np.abs(Yi) / 0.022) * np.where(np.abs(X) < bar_len, 1.0, 0.0) * 1.4
+        )
         arr += bar[..., np.newaxis] * col1
 
     # Spiral arms (logarithmic spiral via polar coordinates)
@@ -122,14 +128,15 @@ def _render_spiral(
 
 
 def _render_elliptical(
-    arr: "np.ndarray",
-    X: "np.ndarray",
-    Y: "np.ndarray",
-    col1: "np.ndarray",
-    col2: "np.ndarray",
-    rng: "np.random.Generator",
+    arr: np.ndarray,
+    X: np.ndarray,
+    Y: np.ndarray,
+    col1: np.ndarray,
+    col2: np.ndarray,
+    rng: np.random.Generator,
 ) -> None:
     import math
+
     import numpy as np
 
     ellipticity = float(rng.uniform(0.28, 0.97))  # b/a
@@ -146,7 +153,9 @@ def _render_elliptical(
     # Sérsic profile
     bn = 2.0 * sersic_n - 1.0 / 3.0
     with np.errstate(over="ignore"):
-        profile = np.exp(-bn * ((np.clip(R_ell, 1e-6, None) / Re) ** (1.0 / sersic_n) - 1.0))
+        profile = np.exp(
+            -bn * ((np.clip(R_ell, 1e-6, None) / Re) ** (1.0 / sersic_n) - 1.0)
+        )
     profile = np.clip(profile, 0.0, 12.0) * 0.68
 
     # Colour gradient: warm core (col2) → cooler outer (col1)
@@ -161,7 +170,9 @@ def _render_elliptical(
     if extra_shell:
         shell_r = float(rng.uniform(0.30, 0.46))
         shell_w = float(rng.uniform(0.018, 0.035))
-        shell = np.exp(-(((R_ell - shell_r) / shell_w) ** 2)) * float(rng.uniform(0.12, 0.30))
+        shell = np.exp(-(((R_ell - shell_r) / shell_w) ** 2)) * float(
+            rng.uniform(0.12, 0.30)
+        )
         arr += shell[..., np.newaxis] * col2 * 0.6
 
     # Nucleus
@@ -170,14 +181,15 @@ def _render_elliptical(
 
 
 def _render_lenticular(
-    arr: "np.ndarray",
-    X: "np.ndarray",
-    Y: "np.ndarray",
-    col1: "np.ndarray",
-    col2: "np.ndarray",
-    rng: "np.random.Generator",
+    arr: np.ndarray,
+    X: np.ndarray,
+    Y: np.ndarray,
+    col1: np.ndarray,
+    col2: np.ndarray,
+    rng: np.random.Generator,
 ) -> None:
     import math
+
     import numpy as np
 
     inclination = float(rng.uniform(0.08, 0.92))  # 0 = face-on, 1 = edge-on
@@ -210,13 +222,17 @@ def _render_lenticular(
     if has_ring:
         ring_r = float(rng.uniform(0.22, 0.40))
         ring_w = float(rng.uniform(0.014, 0.028))
-        ring = np.exp(-(((disk_r - ring_r) / ring_w) ** 2)) * float(rng.uniform(0.28, 0.72))
+        ring = np.exp(-(((disk_r - ring_r) / ring_w) ** 2)) * float(
+            rng.uniform(0.28, 0.72)
+        )
         arr += ring[..., np.newaxis] * col2
 
     # Optional bar
     if has_bar:
         bar_len = float(rng.uniform(0.10, 0.20))
-        bar = np.exp(-np.abs(Yr) / 0.020) * np.where(np.abs(Xr) < bar_len, 1.0, 0.0) * 1.0
+        bar = (
+            np.exp(-np.abs(Yr) / 0.020) * np.where(np.abs(Xr) < bar_len, 1.0, 0.0) * 1.0
+        )
         arr += bar[..., np.newaxis] * col1 * 0.8
 
     # Nucleus
@@ -225,14 +241,15 @@ def _render_lenticular(
 
 
 def _render_irregular(
-    arr: "np.ndarray",
-    X: "np.ndarray",
-    Y: "np.ndarray",
-    col1: "np.ndarray",
-    col2: "np.ndarray",
-    rng: "np.random.Generator",
+    arr: np.ndarray,
+    X: np.ndarray,
+    Y: np.ndarray,
+    col1: np.ndarray,
+    col2: np.ndarray,
+    rng: np.random.Generator,
 ) -> None:
     import math
+
     import numpy as np
 
     n_clumps = int(rng.integers(3, 8))
@@ -331,7 +348,9 @@ def generate_placeholder_images(out_dir: Path, count: int = 20) -> None:
             hcx = float(rng.uniform(-0.35, 0.35))
             hcy = float(rng.uniform(-0.35, 0.35))
             R_h = np.sqrt((X_grid - hcx) ** 2 + (Y_grid - hcy) ** 2)
-            haze = np.exp(-R_h / float(rng.uniform(0.04, 0.10))) * float(rng.uniform(0.05, 0.15))
+            haze = np.exp(-R_h / float(rng.uniform(0.04, 0.10))) * float(
+                rng.uniform(0.05, 0.15)
+            )
             arr += haze[..., np.newaxis] * col2
 
         # Galaxy morphology
@@ -365,7 +384,9 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--url", default=DEFAULT_URL)
     p.add_argument(
         "--out-dir",
-        default=str(Path(__file__).resolve().parents[2] / "frontend" / "public" / "samples"),
+        default=str(
+            Path(__file__).resolve().parents[2] / "frontend" / "public" / "samples"
+        ),
     )
     p.add_argument("--count", type=int, default=20)
     args = p.parse_args(argv)
@@ -378,7 +399,9 @@ def main(argv: list[str] | None = None) -> int:
             download_file(args.url, h5_path)
         except Exception as e:
             print("Failed to download dataset:", e)
-            print("Falling back to generating placeholder sample images for local testing.")
+            print(
+                "Falling back to generating placeholder sample images for local testing."
+            )
             # generate placeholder images directly into out_dir
             try:
                 generate_placeholder_images(out_dir, args.count)

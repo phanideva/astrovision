@@ -31,10 +31,16 @@ from torch.utils.data import Dataset
 
 # 10 -> 4 macro class index mapping
 FINE_TO_MACRO = {
-    0: 2, 1: 2,                   # Irregular
-    2: 1, 3: 1,                   # Elliptical
-    4: 3, 8: 3, 9: 3,             # Lenticular
-    5: 0, 6: 0, 7: 0,             # Spiral
+    0: 2,
+    1: 2,  # Irregular
+    2: 1,
+    3: 1,  # Elliptical
+    4: 3,
+    8: 3,
+    9: 3,  # Lenticular
+    5: 0,
+    6: 0,
+    7: 0,  # Spiral
 }
 MACRO_CLASSES = ["Spiral", "Elliptical", "Irregular", "Lenticular"]
 

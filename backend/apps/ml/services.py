@@ -13,7 +13,6 @@ import json
 import logging
 import threading
 from pathlib import Path
-from typing import Optional
 
 import torch
 from django.conf import settings
@@ -43,9 +42,9 @@ _PREPROCESS = transforms.Compose(
 class InferenceService:
     def __init__(
         self,
-        weights_path: Optional[Path] = None,
-        class_map_path: Optional[Path] = None,
-        device: Optional[str] = None,
+        weights_path: Path | None = None,
+        class_map_path: Path | None = None,
+        device: str | None = None,
     ) -> None:
         self.device = device or ("cuda" if torch.cuda.is_available() else "cpu")
         self.classes = self._load_classes(class_map_path)
@@ -67,7 +66,7 @@ class InferenceService:
             self.model.eval()
 
     @staticmethod
-    def _load_classes(class_map_path: Optional[Path]) -> list[str]:
+    def _load_classes(class_map_path: Path | None) -> list[str]:
         if class_map_path and Path(class_map_path).exists():
             try:
                 data = json.loads(Path(class_map_path).read_text())
@@ -91,13 +90,13 @@ class InferenceService:
             "class": self.classes[idx],
             "confidence": float(probs[idx]),
             "probabilities": {
-                cls: float(p) for cls, p in zip(self.classes, probs)
+                cls: float(p) for cls, p in zip(self.classes, probs, strict=False)
             },
         }
 
 
 _service_lock = threading.Lock()
-_service: Optional[InferenceService] = None
+_service: InferenceService | None = None
 
 
 def get_inference_service() -> InferenceService:
@@ -112,7 +111,7 @@ def get_inference_service() -> InferenceService:
     return _service
 
 
-def set_inference_service(service: Optional[InferenceService]) -> None:
+def set_inference_service(service: InferenceService | None) -> None:
     """Test hook to inject a fake service."""
     global _service
     _service = service

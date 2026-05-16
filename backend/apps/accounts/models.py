@@ -26,8 +26,23 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractUser):
+    class Persona(models.TextChoices):
+        ENTHUSIAST = "enthusiast", "Enthusiast"
+        STUDENT = "student", "Student / Educator"
+        RESEARCHER = "researcher", "Researcher"
+
     username = None
     email = models.EmailField(unique=True)
+    persona = models.CharField(
+        max_length=24,
+        choices=Persona.choices,
+        default=Persona.ENTHUSIAST,
+    )
+    display_name = models.CharField(max_length=120, blank=True)
+    avatar_seed = models.CharField(max_length=120, blank=True)
+    bio = models.TextField(blank=True)
+    onboarded_at = models.DateTimeField(null=True, blank=True)
+    timezone = models.CharField(max_length=64, default="UTC")
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS: list[str] = []

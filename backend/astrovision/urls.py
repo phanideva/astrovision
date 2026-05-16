@@ -21,6 +21,8 @@ urlpatterns = [
     path("api/auth/", include("apps.accounts.urls")),
     path("api/predictions/", include("apps.predictions.urls")),
     path("api/space-media/", include("apps.space_media.urls")),
+    path("api/gamification/", include("apps.gamification.urls")),
+    path("api/portal/", include("apps.portal.urls")),
 ]
 
 if settings.DEBUG:
