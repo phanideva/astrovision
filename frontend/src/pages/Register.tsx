@@ -6,6 +6,8 @@ import { useAuth } from "../store/auth";
 export default function Register() {
   const { register } = useAuth();
   const nav = useNavigate();
+  const [displayName, setDisplayName] = useState("");
+  const [persona, setPersona] = useState<"enthusiast" | "student" | "researcher">("enthusiast");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [err, setErr] = useState<string | null>(null);
@@ -19,8 +21,8 @@ export default function Register() {
     setSlow(false);
     const slowTimer = window.setTimeout(() => setSlow(true), 5000);
     try {
-      await register(email, password);
-      nav("/predict");
+      await register({ email, password, display_name: displayName, persona });
+      nav("/portal");
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
         if (error.code === "ECONNABORTED") {
@@ -49,6 +51,30 @@ export default function Register() {
       <div className="card">
         <h2>Create your account</h2>
         <form onSubmit={onSubmit}>
+          <div className="field">
+            <label htmlFor="displayName">Display Name</label>
+            <input
+              id="displayName"
+              className="input"
+              type="text"
+              placeholder="How should we call you?"
+              value={displayName}
+              onChange={(e: ChangeEvent<HTMLInputElement>) => setDisplayName(e.target.value)}
+            />
+          </div>
+          <div className="field">
+            <label htmlFor="persona">Persona</label>
+            <select
+              id="persona"
+              className="input"
+              value={persona}
+              onChange={(e: ChangeEvent<HTMLSelectElement>) => setPersona(e.target.value as "enthusiast" | "student" | "researcher")}
+            >
+              <option value="enthusiast">Astronomy Enthusiast</option>
+              <option value="student">Student / Educator</option>
+              <option value="researcher">Researcher / Pro Analyst</option>
+            </select>
+          </div>
           <div className="field">
             <label htmlFor="email">Email</label>
             <input

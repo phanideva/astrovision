@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
 import {
   IconBrandTelegram,
@@ -67,6 +67,10 @@ function MarqueeData() {
 export default function Home() {
   const { user, loading } = useAuth();
   const reduced = useReducedMotion();
+
+  if (!loading && user) {
+    return <Navigate to="/portal" replace />;
+  }
 
   // Cinematic scroll sequence
   const wormholeRef = useRef<HTMLDivElement>(null);

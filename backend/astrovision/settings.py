@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     "apps.ml",
     "apps.space_media",
     "apps.gamification",
+    "apps.portal",
 ]
 
 MIDDLEWARE = [

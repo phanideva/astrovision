@@ -35,7 +35,16 @@ def me_view(request):
 @permission_classes([IsAuthenticated])
 def event_view(request):
     event = (request.data.get("event") or "").strip()
-    allowed = {"predict", "sample_open", "page_visit", "constellation_solved", "login"}
+    allowed = {
+        "predict",
+        "sample_open",
+        "page_visit",
+        "constellation_solved",
+        "login",
+        "journal_create",
+        "collection_add",
+        "module_visit",
+    }
     if event not in allowed:
         return Response({"error": "invalid event"}, status=400)
     newly = record_event(request.user, event)

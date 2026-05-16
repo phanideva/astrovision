@@ -102,4 +102,12 @@ def record_event(user, event: str) -> list[Achievement]:
                 newly.append(b)
 
     stat.save()
+
+    try:
+        from apps.portal.services import handle_event
+
+        handle_event(user=user, event=event, unlocked_achievements=newly)
+    except Exception:  # pragma: no cover - never fail core gamification on portal side-effects
+        pass
+
     return newly

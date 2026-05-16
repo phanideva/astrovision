@@ -2,9 +2,12 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { IconAward } from "@tabler/icons-react";
 import { Toast, useToastListener } from "./toast";
+import { portalApi } from "../api/portal";
+import { useAuth } from "../store/auth";
 
 export default function ToastHost() {
   const [items, setItems] = useState<Toast[]>([]);
+  const { user } = useAuth();
 
   useToastListener((t) => {
     setItems((xs) => [...xs, t]);
@@ -12,6 +15,32 @@ export default function ToastHost() {
       setItems((xs) => xs.filter((x) => x.id !== t.id));
     }, 4500);
   });
+
+  useEffect(() => {
+    if (!user) return;
+
+    const seen = new Set<number>();
+    const run = async () => {
+      try {
+        const data = await portalApi.listNotifications(true);
+        const unread = data.results.slice(0, 3);
+        unread.forEach((n) => {
+          if (seen.has(n.id)) return;
+          seen.add(n.id);
+          setItems((xs) => [
+            ...xs,
+            { id: nextToastId(), title: n.title, sub: n.body },
+          ]);
+        });
+      } catch {
+        // ignore polling failures
+      }
+    };
+
+    run();
+    const timer = window.setInterval(run, 60_000);
+    return () => window.clearInterval(timer);
+  }, [user]);
 
   return (
     <div style={{ position: "fixed", top: 84, right: 18, zIndex: 80, display: "flex", flexDirection: "column", gap: 10 }}>

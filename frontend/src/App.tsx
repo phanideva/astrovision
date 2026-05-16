@@ -31,6 +31,14 @@ import NeoRadar from "./pages/NeoRadar";
 import Compare from "./pages/Compare";
 import ConstellationGame from "./pages/ConstellationGame";
 import Achievements from "./pages/Achievements";
+import PortalLayout from "./portal/PortalLayout";
+import PortalOverview from "./portal/PortalOverview";
+import PortalJournal from "./portal/PortalJournal";
+import PortalCollections from "./portal/PortalCollections";
+import PortalMissions from "./portal/PortalMissions";
+import PortalNotifications from "./portal/PortalNotifications";
+import PortalProfile from "./portal/PortalProfile";
+import PortalModules from "./portal/PortalModules";
 
 import "./design/hud.css";
 import "@fontsource/orbitron/400.css";
@@ -85,6 +93,7 @@ function HudNavbar() {
           <NavLink to="/gallery" onClick={close}>Gallery</NavLink>
           <NavLink to="/compare" onClick={close}>Compare</NavLink>
           <NavLink to="/constellation-game" onClick={close}>Stars</NavLink>
+          {user && <NavLink to="/portal" onClick={close}>Portal</NavLink>}
           {user && <NavLink to="/predict" onClick={close}>Classify</NavLink>}
           {user && <NavLink to="/history" onClick={close}>Log</NavLink>}
           {user && <NavLink to="/achievements" onClick={close}>Badges</NavLink>}
@@ -131,6 +140,26 @@ function Protected({ children }: { children: JSX.Element }) {
   return children;
 }
 
+function PortalClassify() {
+  return <Predict />;
+}
+
+function PortalHistory() {
+  return <History />;
+}
+
+function PortalAchievements() {
+  return <Achievements />;
+}
+
+function PortalOutlet() {
+  return (
+    <Protected>
+      <PortalLayout />
+    </Protected>
+  );
+}
+
 function AnimatedRoutes() {
   const location = useLocation();
   const reduced = useReducedMotion();
@@ -166,9 +195,22 @@ function AnimatedRoutes() {
           <Route path="/neo-radar" element={<NeoRadar />} />
           <Route path="/compare" element={<Compare />} />
           <Route path="/constellation-game" element={<ConstellationGame />} />
-          <Route path="/predict" element={<Protected><Predict /></Protected>} />
-          <Route path="/history" element={<Protected><History /></Protected>} />
-          <Route path="/achievements" element={<Protected><Achievements /></Protected>} />
+          <Route path="/portal" element={<PortalOutlet />}>
+            <Route index element={<PortalOverview />} />
+            <Route path="classify" element={<PortalClassify />} />
+            <Route path="journal" element={<PortalJournal />} />
+            <Route path="collections" element={<PortalCollections />} />
+            <Route path="missions" element={<PortalMissions />} />
+            <Route path="inbox" element={<PortalNotifications />} />
+            <Route path="history" element={<PortalHistory />} />
+            <Route path="achievements" element={<PortalAchievements />} />
+            <Route path="modules" element={<PortalModules />} />
+            <Route path="profile" element={<PortalProfile />} />
+            <Route path="*" element={<Navigate to="/portal" replace />} />
+          </Route>
+          <Route path="/predict" element={<Navigate to="/portal/classify" replace />} />
+          <Route path="/history" element={<Navigate to="/portal/history" replace />} />
+          <Route path="/achievements" element={<Navigate to="/portal/achievements" replace />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </motion.div>
@@ -177,12 +219,15 @@ function AnimatedRoutes() {
 }
 
 function AppShell() {
+  const location = useLocation();
+  const inPortal = location.pathname.startsWith("/portal");
+
   return (
     <>
       <BootSplash />
       <StarfieldBackground />
       <CosmicBackground />
-      <HudNavbar />
+      {!inPortal && <HudNavbar />}
       <main className="app-main">
         <AnimatedRoutes />
       </main>
